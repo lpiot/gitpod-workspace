@@ -24,3 +24,11 @@ Host https://gitlab.digitalprocessing.dev
   User git
   IdentityFile /workspace/.secrets/ssh/gitpod_digitalprocessing-gitlab_ed25519
   Compression yes
+
+# ----- ugloo
+
+Host git.deeptorrent.io
+  Hostname git.deeptorrent.io
+  User git
+  IdentityFile /workspace/.secrets/ssh/gitpod_gitlab-ugloo_ed25519
+  Compression yes

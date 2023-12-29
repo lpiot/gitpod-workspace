@@ -1,0 +1,33 @@
+# ~/.config/starship.toml
+
+[container]
+disabled            = false
+format              = '[$symbol \[$name\]]($style)'
+
+[directory]
+disabled            = false
+home_symbol         = '~'
+read_only           = '🔒 '
+read_only_style     = 'red'
+truncation_length   = 8
+truncation_symbol   = '…/'
+
+[git_branch]
+disabled            = false
+always_show_remote  = true
+style               = 'bold purple'
+symbol              = '🌱 '
+truncation_length   = 4
+truncation_symbol   = '…'
+# ignore_branches     = ['master', 'main']
+
+[kubernetes]
+format              = 'on [⛵ ($user on )($cluster in )$context \($namespace\)](dimmed green) '
+disabled            = false
+[kubernetes.context_aliases]
+'dev.local.cluster.k8s' = 'dev'
+'.*/openshift-cluster/.*' = 'openshift'
+'gke_.*_(?P<var_cluster>[\w-]+)' = 'gke-$var_cluster'
+[kubernetes.user_aliases]
+'dev.local.cluster.k8s' = 'dev'
+'root/.*' = 'root'
