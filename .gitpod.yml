@@ -4,15 +4,15 @@ image:
   # You can dynamically build the image when you create a new GitPod workspace with the following lines
   # gitpod/workspace-full
   # file: .gitpod.Dockerfile
-additionalRepositories:
-    - url: https://github.com/musk8teers/container.training.git
-      # checkoutLocation is optional and relative to /workspaces.
-      # by default the location defaults to the repository name.
-      checkoutLocation: 'musk8teers/container.training'
-    - url: https://github.com/musk8teers/spring-music.git
-      # checkoutLocation is optional and relative to /workspaces.
-      # by default the location defaults to the repository name.
-      checkoutLocation: 'musk8teers/spring-music'
+# additionalRepositories:
+#     - url: https://github.com/musk8teers/container.training.git
+#       # checkoutLocation is optional and relative to /workspaces.
+#       # by default the location defaults to the repository name.
+#       checkoutLocation: 'musk8teers/container.training'
+#     - url: https://github.com/musk8teers/spring-music.git
+#       # checkoutLocation is optional and relative to /workspaces.
+#       # by default the location defaults to the repository name.
+#       checkoutLocation: 'musk8teers/spring-music'
 tasks:
   - name: workspace configuration
     command: |
