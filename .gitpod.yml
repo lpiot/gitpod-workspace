@@ -1,9 +1,9 @@
 image:
   # This image is built upon the following Dockerfile: .gitpod.Dockerfile
-  ghcr.io/lpiot/gitpod-workspace
+  # ghcr.io/lpiot/gitpod-workspace
   # You can dynamically build the image when you create a new GitPod workspace with the following lines
   # gitpod/workspace-full
-  # file: .gitpod.Dockerfile
+  file: .gitpod.Dockerfile
 additionalRepositories:
     - url: https://github.com/musk8teers/container.training.git
       # checkoutLocation is optional and relative to /workspaces.
