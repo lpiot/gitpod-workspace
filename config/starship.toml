@@ -12,6 +12,9 @@ read_only_style     = 'red'
 truncation_length   = 8
 truncation_symbol   = '…/'
 
+[direnv]
+disabled            = true
+
 [git_branch]
 disabled            = false
 always_show_remote  = true
@@ -22,12 +25,14 @@ truncation_symbol   = '…'
 # ignore_branches     = ['master', 'main']
 
 [kubernetes]
-format              = 'on [⛵ ($user on )($cluster in )$context \($namespace\)](dimmed green) '
 disabled            = false
+format              = 'on [⛵ ($user on )($cluster in )$context \($namespace\)](dimmed green) '
+
 [kubernetes.context_aliases]
 'dev.local.cluster.k8s' = 'dev'
 '.*/openshift-cluster/.*' = 'openshift'
 'gke_.*_(?P<var_cluster>[\w-]+)' = 'gke-$var_cluster'
+
 [kubernetes.user_aliases]
 'dev.local.cluster.k8s' = 'dev'
 'root/.*' = 'root'
