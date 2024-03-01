@@ -19,7 +19,7 @@ tasks:
       mkdir -p /home/gitpod/.ssh
       ln -s /workspace/gitpod-workspace/config/ssh-config /home/gitpod/.ssh/config
       ln -s /workspace/gitpod-workspace/config/starship.toml /home/gitpod/.config/
-      echo 'eval "$(starship init bash)"' > /home/gitpod/.bashrc
+      echo 'eval "$(starship init bash)"' >> /home/gitpod/.bashrc
   - name: pre-requisite for container.training
     before: |
       echo "pre-requisite for container.training"
