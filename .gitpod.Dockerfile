@@ -19,13 +19,26 @@ RUN apt-get install -y cmake
 RUN cargo install starship --locked
 
 # -----------------------------------------------------------------------------
+# Mozilla SOPS
+# -----------------------------------------------------------------------------
+FROM base as sops
+LABEL maintainer="Ludovic Piot <ludovic.piot@thegaragebandofit.com>"
+
+# Mozilla SOPS release version
+ARG SOPS_VERSION=3.8.1
+
+RUN curl -LO https://github.com/getsops/sops/releases/download/v{$SOPS_VERSION}/sops-v{$SOPS_VERSION}.linux.amd64 \
+    mv sops-v${SOPS_VERSION}.linux.amd64 /usr/local/bin/sops \
+    chmod +x /usr/local/bin/sops
+
+# -----------------------------------------------------------------------------
 # Digital Ocean
 # -----------------------------------------------------------------------------
 FROM base as do
 LABEL maintainer="Ludovic Piot <ludovic.piot@thegaragebandofit.com>"
 
 # Digital Ocean CLI vars
-ARG DOCTL_VERSION=1.102.0
+ARG DOCTL_VERSION=1.104.0
 
 WORKDIR /usr/bin
 RUN wget https://github.com/digitalocean/doctl/releases/download/v${DOCTL_VERSION}/doctl-${DOCTL_VERSION}-linux-amd64.tar.gz && \
@@ -41,7 +54,7 @@ FROM base as tf
 LABEL maintainer="Ludovic Piot <ludovic.piot@thegaragebandofit.com>"
 
 # Terraform vars
-ARG TERRAFORM_VERSION=1.6.6
+ARG TERRAFORM_VERSION=1.7.4
 
 # Terraform install
 WORKDIR /usr/bin
@@ -60,7 +73,7 @@ FROM base as pac
 LABEL maintainer="Ludovic Piot <ludovic.piot@thegaragebandofit.com>"
 
 # Packer vars
-ARG PACKER_VERSION=1.10.0
+ARG PACKER_VERSION=1.10.1
 
 # Packer install
 WORKDIR /usr/bin
@@ -94,6 +107,9 @@ WORKDIR /home/gitpod
 
 # Copy of RUST awesome CLI tools
 COPY --from=starship /usr/local/cargo/bin/starship /usr/local/bin
+
+# Copy of Mozilla SOPS
+COPY --from=sops /usr/local/bin/sops /usr/local/bin
 
 # lpiot 2023-11-19: now retrieved from jpetazzo/shpod
 # Copy lot of tools from jpetazzo/shpod
