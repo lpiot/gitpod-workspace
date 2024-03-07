@@ -19,10 +19,13 @@ RUN apt-get install -y cmake
 RUN cargo install starship --locked
 
 # -----------------------------------------------------------------------------
-# Mozilla SOPS
+# Mozilla SOPS & AGE
 # -----------------------------------------------------------------------------
 FROM base as sops
 LABEL maintainer="Ludovic Piot <ludovic.piot@thegaragebandofit.com>"
+
+# Install AGE
+sudo apt-get install -y age
 
 # Mozilla SOPS release version
 ARG SOPS_VERSION=3.8.1
@@ -107,6 +110,9 @@ WORKDIR /home/gitpod
 
 # Copy of RUST awesome CLI tools
 COPY --from=starship /usr/local/cargo/bin/starship /usr/local/bin
+
+# Copy of AGE
+COPY --from=sops /usr/local/bin/age /usr/local/bin
 
 # Copy of Mozilla SOPS
 COPY --from=sops /usr/local/bin/sops /usr/local/bin
