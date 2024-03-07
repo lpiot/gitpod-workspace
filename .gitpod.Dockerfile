@@ -28,7 +28,7 @@ LABEL maintainer="Ludovic Piot <ludovic.piot@thegaragebandofit.com>"
 RUN apt-get install -y age
 
 # Mozilla SOPS release version
-ARG SOPS_VERSION=3.8.1
+ARG SOPS_VERSION=3.8.1  
 
 RUN wget https://github.com/getsops/sops/releases/download/v${SOPS_VERSION}/sops-v${SOPS_VERSION}.linux.amd64 && \
     mv sops-v${SOPS_VERSION}.linux.amd64 /usr/local/bin/sops && \
@@ -112,7 +112,7 @@ WORKDIR /home/gitpod
 COPY --from=starship /usr/local/cargo/bin/starship /usr/local/bin
 
 # Copy of AGE
-COPY --from=sops /usr/local/bin/age /usr/local/bin
+COPY --from=sops /usr/bin/age /usr/local/bin
 
 # Copy of Mozilla SOPS
 COPY --from=sops /usr/local/bin/sops /usr/local/bin
