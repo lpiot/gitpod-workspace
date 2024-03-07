@@ -30,8 +30,8 @@ RUN apt-get install -y age
 # Mozilla SOPS release version
 ARG SOPS_VERSION=3.8.1
 
-RUN curl -LO https://github.com/getsops/sops/releases/download/v${SOPS_VERSION}/sops-v${SOPS_VERSION}.linux.amd64 \
-    mv sops-v${SOPS_VERSION}.linux.amd64 /usr/local/bin/sops \
+RUN curl -LO https://github.com/getsops/sops/releases/download/v${SOPS_VERSION}/sops-v${SOPS_VERSION}.linux.amd64 && \
+    mv sops-v${SOPS_VERSION}.linux.amd64 /usr/local/bin/sops && \
     chmod +x /usr/local/bin/sops
 
 # -----------------------------------------------------------------------------
