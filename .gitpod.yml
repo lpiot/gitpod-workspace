@@ -41,6 +41,7 @@ vscode:
     - hashicorp.terraform
     - hashicorp.hcl
     - tamasfe.even-better-toml
+    - lextudio.restructuredtext
 
 workspaceLocation:
   "."
