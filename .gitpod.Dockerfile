@@ -25,7 +25,7 @@ FROM base as sops
 LABEL maintainer="Ludovic Piot <ludovic.piot@thegaragebandofit.com>"
 
 # Install AGE
-sudo apt-get install -y age
+RUN apt-get install -y age
 
 # Mozilla SOPS release version
 ARG SOPS_VERSION=3.8.1
