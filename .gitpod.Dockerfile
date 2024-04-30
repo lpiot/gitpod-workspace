@@ -5,7 +5,7 @@ FROM ubuntu:22.04 as base
 LABEL maintainer="Ludovic Piot <ludovic.piot@thegaragebandofit.com>"
 
 RUN apt-get update -y
-RUN apt-get install -y wget unzip
+RUN apt-get install -y wget unzip curl
 
 # -----------------------------------------------------------------------------
 # Starship in RUST
@@ -49,6 +49,14 @@ RUN wget https://github.com/digitalocean/doctl/releases/download/v${DOCTL_VERSIO
     rm -f ./doctl-${DOCTL_VERSION}-linux-amd64.tar.gz
 
 # TODO: Add Digital Ocean CLI autocompletion in BASH
+
+# -----------------------------------------------------------------------------
+# Scaleway
+# -----------------------------------------------------------------------------
+FROM base as scw
+LABEL maintainer="Ludovic Piot <ludovic.piot@thegaragebandofit.com>"
+
+RUN curl -s https://raw.githubusercontent.com/scaleway/scaleway-cli/master/scripts/get.sh | sh
 
 # -----------------------------------------------------------------------------
 # Terraform
@@ -145,6 +153,9 @@ COPY --from=jpetazzo/shpod /usr/bin/yq /usr/bin
 COPY --from=jpetazzo/shpod /usr/share/bash-completion/* /usr/share/bash-completion
 
 COPY --from=do /usr/bin/doctl /usr/bin/doctl
+
+# Copy of scaleway CLI
+COPY --from=scw /usr/local/bin/scw /usr/bin/scw
 
 COPY --from=tf /usr/bin/terraform /usr/bin/terraform
 COPY --from=tf /root/.bashrc ./.bashrc_tf
