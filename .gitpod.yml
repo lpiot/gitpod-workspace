@@ -33,7 +33,10 @@ tasks:
       echo "Activate SSH agent"
       eval $(ssh-agent) ; ssh-add && echo "SSH_AUTH_SOCK=${SSH_AUTH_SOCK}"
       echo "Configure Digital Ocean CLI"
-      doctl auth init --access-token $(tail -1 /workspace/.secrets/gitpod_digitalocean.token)
+      doctl auth init --access-token $(tail -1 /workspace/.secrets/gitpod-digitalocean.token)
+      echo "configure autocomplete"
+      echo '# Scaleway CLI autocomplete initialization.' >> /home/gitpod/.bashrc
+      echo 'eval "$(/usr/local/bin/scw autocomplete script shell=bash)"' >> /home/gitpod/.bashrc
 vscode:
   extensions:
     - yzhang.markdown-all-in-one
