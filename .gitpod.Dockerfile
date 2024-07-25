@@ -1,8 +1,34 @@
 # -----------------------------------------------------------------------------
+# Common ARGs
+# -----------------------------------------------------------------------------
+
+ARG DOCKER_IMAGES_MAINTAINER="Ludovic Piot <ludovic.piot@thegaragebandofit.com>"
+
+# For consistency purpose, please use the same base as gitpod/workspace-full image
+# see: https://github.com/gitpod-io/workspace-images
+ARG UBUNTU_VERSION=22.04
+
+# Mozilla SOPS release version
+ARG SOPS_VERSION=3.9.0
+
+# Digital Ocean CLI release version
+ARG DOCTL_VERSION=1.110.0
+
+# Terraform release version
+ARG TERRAFORM_VERSION=1.9.3
+
+# Packer release version
+ARG PACKER_VERSION=1.11.1
+
+
+# -----------------------------------------------------------------------------
 # Base install
 # -----------------------------------------------------------------------------
-FROM ubuntu:22.04 as base
-LABEL maintainer="Ludovic Piot <ludovic.piot@thegaragebandofit.com>"
+FROM ubuntu:${UBUNTU_VERSION} as base
+
+ARG DOCKER_IMAGES_MAINTAINER
+
+LABEL maintainer=${DOCKER_IMAGES_MAINTAINER}
 
 RUN apt-get update -y
 RUN apt-get install -y wget unzip curl
@@ -12,7 +38,10 @@ RUN apt-get install -y wget unzip curl
 # source: https://starship.rs/
 # -----------------------------------------------------------------------------
 FROM rust:slim as starship
-LABEL maintainer="Ludovic Piot <ludovic.piot@thegaragebandofit.com>"
+
+ARG DOCKER_IMAGES_MAINTAINER
+
+LABEL maintainer=${DOCKER_IMAGES_MAINTAINER}
 
 RUN apt-get update -y
 RUN apt-get install -y cmake
@@ -22,13 +51,14 @@ RUN cargo install starship --locked
 # Mozilla SOPS & AGE
 # -----------------------------------------------------------------------------
 FROM base as sops
-LABEL maintainer="Ludovic Piot <ludovic.piot@thegaragebandofit.com>"
+
+ARG DOCKER_IMAGES_MAINTAINER
+ARG SOPS_VERSION
+
+LABEL maintainer=${DOCKER_IMAGES_MAINTAINER}
 
 # Install AGE
 RUN apt-get install -y age
-
-# Mozilla SOPS release version
-ARG SOPS_VERSION=3.8.1  
 
 RUN wget https://github.com/getsops/sops/releases/download/v${SOPS_VERSION}/sops-v${SOPS_VERSION}.linux.amd64 && \
     mv sops-v${SOPS_VERSION}.linux.amd64 /usr/local/bin/sops && \
@@ -38,10 +68,11 @@ RUN wget https://github.com/getsops/sops/releases/download/v${SOPS_VERSION}/sops
 # Digital Ocean
 # -----------------------------------------------------------------------------
 FROM base as do
-LABEL maintainer="Ludovic Piot <ludovic.piot@thegaragebandofit.com>"
 
-# Digital Ocean CLI vars
-ARG DOCTL_VERSION=1.104.0
+ARG DOCKER_IMAGES_MAINTAINER
+ARG DOCTL_VERSION
+
+LABEL maintainer=${DOCKER_IMAGES_MAINTAINER}
 
 WORKDIR /usr/bin
 RUN wget https://github.com/digitalocean/doctl/releases/download/v${DOCTL_VERSION}/doctl-${DOCTL_VERSION}-linux-amd64.tar.gz && \
@@ -54,7 +85,10 @@ RUN wget https://github.com/digitalocean/doctl/releases/download/v${DOCTL_VERSIO
 # Scaleway
 # -----------------------------------------------------------------------------
 FROM base as scw
-LABEL maintainer="Ludovic Piot <ludovic.piot@thegaragebandofit.com>"
+
+ARG DOCKER_IMAGES_MAINTAINER
+
+LABEL maintainer=${DOCKER_IMAGES_MAINTAINER}
 
 RUN curl -s https://raw.githubusercontent.com/scaleway/scaleway-cli/master/scripts/get.sh | sh
 
@@ -62,10 +96,11 @@ RUN curl -s https://raw.githubusercontent.com/scaleway/scaleway-cli/master/scrip
 # Terraform
 # -----------------------------------------------------------------------------
 FROM base as tf
-LABEL maintainer="Ludovic Piot <ludovic.piot@thegaragebandofit.com>"
 
-# Terraform vars
-ARG TERRAFORM_VERSION=1.7.4
+ARG DOCKER_IMAGES_MAINTAINER
+ARG TERRAFORM_VERSION
+
+LABEL maintainer=${DOCKER_IMAGES_MAINTAINER}
 
 # Terraform install
 WORKDIR /usr/bin
@@ -81,10 +116,11 @@ RUN touch ~/.bashrc && \
 # Packer
 # -----------------------------------------------------------------------------
 FROM base as pac
-LABEL maintainer="Ludovic Piot <ludovic.piot@thegaragebandofit.com>"
 
-# Packer vars
-ARG PACKER_VERSION=1.10.1
+ARG DOCKER_IMAGES_MAINTAINER
+ARG PACKER_VERSION
+
+LABEL maintainer=${DOCKER_IMAGES_MAINTAINER}
 
 # Packer install
 WORKDIR /usr/bin
@@ -102,8 +138,11 @@ RUN touch ~/.bashrc && \
 # -----------------------------------------------------------------------------
 # lpiot 2023-11-19: now retrieved from jpetazzo/shpod
 # FROM base as yq
-# LABEL maintainer="Ludovic Piot <ludovic.piot@thegaragebandofit.com>"
-
+# 
+# ARG DOCKER_IMAGES_MAINTAINER
+# 
+# LABEL maintainer=${DOCKER_IMAGES_MAINTAINER}
+# 
 # RUN wget -qO /usr/bin/yq  https://github.com/mikefarah/yq/releases/latest/download/yq_linux_amd64 && \
 #     chmod a+x /usr/bin/yq
 
@@ -112,7 +151,10 @@ RUN touch ~/.bashrc && \
 # -----------------------------------------------------------------------------
 FROM gitpod/workspace-full
 # as gitpod_workspace_gcloud
-LABEL maintainer="Ludovic Piot <ludovic.piot@thegaragebandofit.com>"
+
+ARG DOCKER_IMAGES_MAINTAINER
+
+LABEL maintainer=${DOCKER_IMAGES_MAINTAINER}
 
 WORKDIR /home/gitpod
 
