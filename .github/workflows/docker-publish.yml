@@ -10,7 +10,7 @@ on:
   # It lets you trigger the workflow manually from GitHub's web UI.
   workflow_dispatch:
   push:
-    branches: [ "main" ]
+    branches: [ "main","test" ]
     # Publish semver tags as releases.
     tags: [ 'v*.*.*' ]
   pull_request:
