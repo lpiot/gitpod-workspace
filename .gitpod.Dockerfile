@@ -43,9 +43,9 @@ ARG DOCKER_IMAGES_MAINTAINER
 
 LABEL maintainer=${DOCKER_IMAGES_MAINTAINER}
 
-RUN apt-get update -y
-RUN apt-get install -y cmake
-RUN cargo install starship --locked
+RUN apt-get update -y && \
+    apt-get install -y cmake && \
+    cargo install starship --locked
 
 RUN starship init bash >> ~/.completion_starship.sh
 
@@ -60,9 +60,9 @@ ARG SOPS_VERSION
 LABEL maintainer=${DOCKER_IMAGES_MAINTAINER}
 
 # Install AGE
-RUN apt-get install -y age
-
-RUN wget https://github.com/getsops/sops/releases/download/v${SOPS_VERSION}/sops-v${SOPS_VERSION}.linux.amd64 && \
+RUN apt-get update -y && \
+    apt-get install -y age
+    wget https://github.com/getsops/sops/releases/download/v${SOPS_VERSION}/sops-v${SOPS_VERSION}.linux.amd64 && \
     mv sops-v${SOPS_VERSION}.linux.amd64 /usr/local/bin/sops && \
     chmod +x /usr/local/bin/sops
 
