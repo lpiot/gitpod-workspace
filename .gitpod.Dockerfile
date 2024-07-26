@@ -47,7 +47,7 @@ RUN apt-get update -y && \
     apt-get install -y cmake && \
     cargo install starship
 
-RUN starship init bash >> ~/.completion_starship.sh
+RUN starship init bash >> ~/completion_starship.sh
 
 # -----------------------------------------------------------------------------
 # Mozilla SOPS & AGE
@@ -61,7 +61,7 @@ LABEL maintainer=${DOCKER_IMAGES_MAINTAINER}
 
 # Install AGE
 RUN apt-get update -y && \
-    apt-get install -y age
+    apt-get install -y age && \
     wget https://github.com/getsops/sops/releases/download/v${SOPS_VERSION}/sops-v${SOPS_VERSION}.linux.amd64 && \
     mv sops-v${SOPS_VERSION}.linux.amd64 /usr/local/bin/sops && \
     chmod +x /usr/local/bin/sops
