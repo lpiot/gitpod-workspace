@@ -45,7 +45,7 @@ LABEL maintainer=${DOCKER_IMAGES_MAINTAINER}
 
 RUN apt-get update -y && \
     apt-get install -y cmake && \
-    cargo install starship --locked
+    cargo install starship
 
 RUN starship init bash >> ~/.completion_starship.sh
 
