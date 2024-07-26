@@ -1,6 +1,6 @@
 image:
   # This image is built upon the following Dockerfile: .gitpod.Dockerfile
-  docker pull ghcr.io/lpiot/gitpod-workspace:sha256-2e340d420aefa59a6a3690c1573b9ff4c10cdacc7c74be7d00f28988e42d0323.sig
+  ghcr.io/lpiot/gitpod-workspace:sha256-2e340d420aefa59a6a3690c1573b9ff4c10cdacc7c74be7d00f28988e42d0323.sig
   # You can dynamically build the image when you create a new GitPod workspace with the following lines
   # gitpod/workspace-full
   # file: .gitpod.Dockerfile
