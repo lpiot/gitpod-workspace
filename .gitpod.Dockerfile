@@ -47,6 +47,8 @@ RUN apt-get update -y
 RUN apt-get install -y cmake
 RUN cargo install starship --locked
 
+RUN starship init bash >> ~/.completion_starship.sh
+
 # -----------------------------------------------------------------------------
 # Mozilla SOPS & AGE
 # -----------------------------------------------------------------------------
@@ -79,7 +81,8 @@ RUN wget https://github.com/digitalocean/doctl/releases/download/v${DOCTL_VERSIO
     tar -xzf ./doctl-${DOCTL_VERSION}-linux-amd64.tar.gz && \
     rm -f ./doctl-${DOCTL_VERSION}-linux-amd64.tar.gz
 
-# TODO: Add Digital Ocean CLI autocompletion in BASH
+# Add Digital Ocean CLI autocompletion in BASH
+RUN ./doctl completion bash > ~/completion_doctl.sh
 
 # -----------------------------------------------------------------------------
 # Scaleway
@@ -160,6 +163,8 @@ WORKDIR /home/gitpod
 
 # Copy of RUST awesome CLI tools
 COPY --from=starship /usr/local/cargo/bin/starship /usr/local/bin
+COPY --from=starship /root/completion_starship.sh ./
+RUN echo "source ./completion_starship.sh" >> ./.bashrc
 
 # Copy of AGE
 COPY --from=sops /usr/bin/age /usr/local/bin
@@ -194,18 +199,26 @@ COPY --from=jpetazzo/shpod /usr/local/bin/ytt /usr/local/bin
 COPY --from=jpetazzo/shpod /usr/bin/yq /usr/bin
 COPY --from=jpetazzo/shpod /usr/share/bash-completion/* /usr/share/bash-completion
 
+# Copy of Digital Ocean CLI
 COPY --from=do /usr/bin/doctl /usr/bin/doctl
+COPY --from=do /root/completion_doctl.sh ./
+RUN echo "source ./completion_doctl.sh" >> ./.bashrc
 
-# Copy of scaleway CLI
+# Copy of Scaleway CLI
 COPY --from=scw /usr/local/bin/scw /usr/bin/scw
 
+# Copy of Terraform
 COPY --from=tf /usr/bin/terraform /usr/bin/terraform
-COPY --from=tf /root/.bashrc ./.bashrc_tf
+COPY --from=tf /root/.bashrc ./completion_terraform.sh
+RUN echo "source ./completion_terraform.sh" >> ./.bashrc
 
+# Copy of Packer
 COPY --from=pac /usr/bin/packer /usr/bin/packer
-COPY --from=pac /root/.bashrc ./.bashrc_pac
+COPY --from=pac /root/.bashrc ./completion_packer.sh
+RUN echo "source ./completion_packer.sh" >> ./.bashrc
 
-RUN cat ./.bashrc_tf ./.bashrc_pac >> ./.bashrc
+# activate all completion scripts into the final .bashrc
+# RUN cat ./.bashrc_tf ./.bashrc_pac >> ./.bashrc
 
 # ----- GCloud SDK install
 RUN sudo apt-get update && \
