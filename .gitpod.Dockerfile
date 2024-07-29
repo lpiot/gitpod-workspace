@@ -152,7 +152,7 @@ RUN touch ~/.bashrc && \
 # -----------------------------------------------------------------------------
 # Final Image
 # -----------------------------------------------------------------------------
-FROM gitpod/workspace-full
+FROM gitpod/workspace-python-3.12
 # as gitpod_workspace_gcloud
 
 ARG DOCKER_IMAGES_MAINTAINER
@@ -221,7 +221,7 @@ RUN echo "source ./completion_packer.sh" >> ./.bashrc
 # RUN cat ./.bashrc_tf ./.bashrc_pac >> ./.bashrc
 
 # ----- GCloud SDK install
-RUN sudo apt-get update && \
+RUN sudo apt-get update -y && \
     # Add pre-requisites
     sudo apt-get install -y apt-transport-https ca-certificates gnupg
     # Add distribution URI for GCloud SDK as a package source
@@ -231,6 +231,7 @@ RUN echo "deb [signed-by=/usr/share/keyrings/cloud.google.gpg] https://packages.
     sudo apt-get update && \
     sudo apt-get install -y google-cloud-sdk && \
     # sudo apt-get install -y kubectl && \
+    sudo rm -Rf /usr/lib/google-cloud-sdk/platform/bundledpythonunix && \
     sudo rm -Rf ./.sdkman
 
 # lpiot 2023-11-19: now retrieved from jpetazzo/shpod
