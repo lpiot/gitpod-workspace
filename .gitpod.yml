@@ -20,7 +20,6 @@ tasks:
       mkdir -p /home/gitpod/.ssh
       ln -s /workspace/gitpod-workspace/config/ssh-config /home/gitpod/.ssh/config
       ln -s /workspace/gitpod-workspace/config/starship.toml /home/gitpod/.config/
-      echo 'eval "$(starship init bash)"' >> /home/gitpod/.bashrc
       mkdir -p /workspace/.secrets
       cp -pr /workspace/gitpod-workspace/.secrets/* /workspace/.secrets
       echo ${SOPS_AGE_KEY_FILE} | base64 --decode > /workspace/.secrets/age-keys
@@ -35,9 +34,6 @@ tasks:
       eval $(ssh-agent) ; ssh-add && echo "SSH_AUTH_SOCK=${SSH_AUTH_SOCK}"
       echo "Configure Digital Ocean CLI"
       doctl auth init --access-token $(tail -1 /workspace/.secrets/gitpod-digitalocean.token)
-      echo "configure autocomplete"
-      echo '# Scaleway CLI autocomplete initialization.' >> /home/gitpod/.bashrc
-      echo 'eval "$(/usr/local/bin/scw autocomplete script shell=bash)"' >> /home/gitpod/.bashrc
 vscode:
   extensions:
     - yzhang.markdown-all-in-one

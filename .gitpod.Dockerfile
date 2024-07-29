@@ -47,8 +47,6 @@ RUN apt-get update -y && \
     apt-get install -y cmake && \
     cargo install starship
 
-RUN starship init bash >> ~/completion_starship.sh
-
 # -----------------------------------------------------------------------------
 # Mozilla SOPS & AGE
 # -----------------------------------------------------------------------------
@@ -162,8 +160,8 @@ LABEL maintainer=${DOCKER_IMAGES_MAINTAINER}
 WORKDIR /home/gitpod
 
 # Copy of RUST awesome CLI tools
-COPY --from=starship /usr/local/cargo/bin/starship /usr/local/bin
-COPY --from=starship /root/completion_starship.sh  ./.bashrc.d/
+COPY --from=starship /usr/local/cargo/bin/starship /usr/local/bin/
+RUN starship init bash > ./.bashrc.d/completion_starship.sh
 
 # Copy of AGE
 COPY --from=sops /usr/bin/age /usr/local/bin
