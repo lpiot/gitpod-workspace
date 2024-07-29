@@ -163,8 +163,7 @@ WORKDIR /home/gitpod
 
 # Copy of RUST awesome CLI tools
 COPY --from=starship /usr/local/cargo/bin/starship /usr/local/bin
-COPY --from=starship /root/completion_starship.sh ./
-RUN echo "source ./completion_starship.sh" >> ./.bashrc
+COPY --from=starship /root/completion_starship.sh  ./.bashrc.d/
 
 # Copy of AGE
 COPY --from=sops /usr/bin/age /usr/local/bin
@@ -201,24 +200,21 @@ COPY --from=jpetazzo/shpod /usr/share/bash-completion/* /usr/share/bash-completi
 
 # Copy of Digital Ocean CLI
 COPY --from=do /usr/bin/doctl /usr/bin/doctl
-COPY --from=do /root/completion_doctl.sh ./
-RUN echo "source ./completion_doctl.sh" >> ./.bashrc
+COPY --from=do /root/completion_doctl.sh ./.bashrc.d/
 
 # Copy of Scaleway CLI
 COPY --from=scw /usr/local/bin/scw /usr/bin/scw
+RUN scw autocomplete script shell=bash > ./.bashrc.d/completion_scw.sh
+
 
 # Copy of Terraform
 COPY --from=tf /usr/bin/terraform /usr/bin/terraform
-COPY --from=tf /root/.bashrc ./completion_terraform.sh
-RUN echo "source ./completion_terraform.sh" >> ./.bashrc
+COPY --from=tf /root/.bashrc ./.bashrc.d/completion_terraform.sh
+
 
 # Copy of Packer
 COPY --from=pac /usr/bin/packer /usr/bin/packer
-COPY --from=pac /root/.bashrc ./completion_packer.sh
-RUN echo "source ./completion_packer.sh" >> ./.bashrc
-
-# activate all completion scripts into the final .bashrc
-# RUN cat ./.bashrc_tf ./.bashrc_pac >> ./.bashrc
+COPY --from=pac /root/.bashrc  ./.bashrc.d/completion_packer.sh
 
 # ----- GCloud SDK install
 RUN sudo apt-get update -y && \
