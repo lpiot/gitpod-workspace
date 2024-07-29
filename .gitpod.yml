@@ -1,6 +1,6 @@
 image:
   # This image is built upon the following Dockerfile: .gitpod.Dockerfile
-  ghcr.io/lpiot/gitpod-workspace:lpiot-patch-1
+  ghcr.io/lpiot/gitpod-workspace:test
   # You can dynamically build the image when you create a new GitPod workspace with the following lines
   # gitpod/workspace-full
   #lpiot/gitpod-workspace
