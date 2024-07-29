@@ -3,7 +3,7 @@ image:
   # ghcr.io/lpiot/gitpod-workspace:sha256-e2e83e0618c2e04aa7a5a0886b3e1c2480be9a8d79a1d88233f9814c339e332e.sig
   # You can dynamically build the image when you create a new GitPod workspace with the following lines
   # gitpod/workspace-full
-  gitpod/workspace-base
+  lpiot/gitpod-workspace
   # file: .gitpod.Dockerfile
 # additionalRepositories:
 #     - url: https://github.com/musk8teers/container.training.git
