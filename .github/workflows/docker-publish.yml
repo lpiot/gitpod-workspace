@@ -10,11 +10,11 @@ on:
   # It lets you trigger the workflow manually from GitHub's web UI.
   workflow_dispatch:
   push:
-    branches: [ "main","test" ]
+    branches: [ "test" ]
     # Publish semver tags as releases.
     tags: [ 'v*.*.*' ]
-  pull_request:
-    branches: [ "main" ]
+  # pull_request:
+  #   branches: [ "main" ]
 
 env:
   # Use docker.io for Docker Hub if empty
