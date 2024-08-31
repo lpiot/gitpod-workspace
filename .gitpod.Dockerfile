@@ -6,25 +6,27 @@ ARG DOCKER_IMAGES_MAINTAINER="Ludovic Piot <ludovic.piot@thegaragebandofit.com>"
 
 # For consistency purpose, please use the same base as gitpod/workspace-full image
 # see: https://github.com/gitpod-io/workspace-images
-ARG UBUNTU_VERSION=22.04
+ARG BASE_IMAGE=ubuntu:22.04
+# ARG GITPOD_IMAGE=gitpod/workspace-python-3.12
+ARG GITPOD_IMAGE=gitpod/workspace-full
 
 # Mozilla SOPS release version
 ARG SOPS_VERSION=3.9.0
 
 # Digital Ocean CLI release version
-ARG DOCTL_VERSION=1.110.0
+ARG DOCTL_VERSION=1.111.0
 
 # Terraform release version
-ARG TERRAFORM_VERSION=1.9.3
+ARG TERRAFORM_VERSION=1.9.5
 
 # Packer release version
-ARG PACKER_VERSION=1.11.1
+ARG PACKER_VERSION=1.11.2
 
 
 # -----------------------------------------------------------------------------
 # Base install
 # -----------------------------------------------------------------------------
-FROM ubuntu:${UBUNTU_VERSION} as base
+FROM ${BASE_IMAGE} as base
 
 ARG DOCKER_IMAGES_MAINTAINER
 
@@ -156,8 +158,7 @@ RUN touch ~/.bashrc && \
 # -----------------------------------------------------------------------------
 # Final Image(s)
 # -----------------------------------------------------------------------------
-FROM gitpod/workspace-python-3.12
-# as gitpod_workspace_gcloud
+FROM ${GITPOD_IMAGE} as gitpod_workspace
 
 ARG DOCKER_IMAGES_MAINTAINER
 
