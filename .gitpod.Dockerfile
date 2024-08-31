@@ -55,7 +55,7 @@ RUN <<EOF bash
     ./install.sh --verbose --yes
 
     # Compress binaries
-    upx /usr/local/bin/starship
+    #upx /usr/local/bin/starship
 EOF
 
 
