@@ -36,7 +36,7 @@ ARG DOCKER_IMAGES_MAINTAINER
 LABEL maintainer=${DOCKER_IMAGES_MAINTAINER}
 
 RUN apt-get update -y && \
-    apt-get install -y curl unzip wget
+    apt-get install -y curl unzip upx wget
 
 
 # -----------------------------------------------------------------------------
@@ -53,6 +53,9 @@ RUN <<EOF bash
     wget https://starship.rs/install.sh
     chmod +x install.sh
     ./install.sh --verbose --yes
+
+    # Compress binaries
+    upx /usr/local/bin/starship
 EOF
 
 
@@ -72,6 +75,10 @@ RUN <<EOF bash
     wget https://github.com/getsops/sops/releases/download/v${SOPS_VERSION}/sops-v${SOPS_VERSION}.linux.amd64
     mv sops-v${SOPS_VERSION}.linux.amd64 /usr/local/bin/sops
     chmod +x /usr/local/bin/sops
+
+    # Compress binaries
+    upx /usr/bin/age
+    upx /usr/local/bin/sops
 EOF
 
 # -----------------------------------------------------------------------------
@@ -90,6 +97,8 @@ RUN <<EOF bash
     tar -xzf ./doctl-${DOCTL_VERSION}-linux-amd64.tar.gz
     rm -f ./doctl-${DOCTL_VERSION}-linux-amd64.tar.gz
 
+    # Compress binaries
+    upx /usr/bin/doctl
     # Add Digital Ocean CLI autocompletion in BASH
     ./doctl completion bash > ~/completion_doctl.sh
 EOF
@@ -104,7 +113,12 @@ ARG DOCKER_IMAGES_MAINTAINER
 
 LABEL maintainer=${DOCKER_IMAGES_MAINTAINER}
 
-RUN curl -s https://raw.githubusercontent.com/scaleway/scaleway-cli/master/scripts/get.sh | sh
+RUN <<EOF bash
+    curl -s https://raw.githubusercontent.com/scaleway/scaleway-cli/master/scripts/get.sh | sh
+
+    # Compress binaries
+    upx /usr/local/bin/scw
+EOF
 
 
 # -----------------------------------------------------------------------------
@@ -124,10 +138,14 @@ RUN <<EOF bash
     unzip ./terraform_${TERRAFORM_VERSION}_linux_amd64.zip
     rm -f ./terraform_${TERRAFORM_VERSION}_linux_amd64.zip
 
+    # Compress binaries
+    upx /usr/local/bin/terraform
+ 
     # Add Terraform autocompletion in BASH
     touch ~/.bashrc
     terraform --install-autocomplete
 EOF
+
 
 # -----------------------------------------------------------------------------
 # Packer
@@ -146,10 +164,28 @@ RUN <<EOF bash
     unzip ./packer_${PACKER_VERSION}_linux_amd64.zip
     rm -f ./packer_${PACKER_VERSION}_linux_amd64.zip
 
+    # Compress binaries
+    upx /usr/local/bin/packer
+
     Add Packer autocompletion in BASH
     touch ~/.bashrc
     packer -autocomplete-install
 EOF
+
+
+# -----------------------------------------------------------------------------
+# jpetazzo/shpod
+# -----------------------------------------------------------------------------
+FROM jpetazzo/shpod as shpod
+
+ARG DOCKER_IMAGES_MAINTAINER
+
+RUN <<EOF bash
+    apk add upx
+    upx /usr/local/bin/*
+    upx /usr/bin/yq
+EOF
+
 
 # -----------------------------------------------------------------------------
 # yq CLI tool
@@ -182,18 +218,9 @@ COPY --from=starship --link /usr/local/bin/starship /usr/local/bin/
 # TODO: switch this part into starship build stage
 RUN starship init bash > ./.bashrc.d/completion_starship.sh
 
-# Copy of AGE
-COPY --from=sops --link /usr/bin/age /usr/local/bin
-
 # Copy of Mozilla SOPS
+COPY --from=sops --link /usr/bin/age /usr/local/bin
 COPY --from=sops --link /usr/local/bin/sops /usr/local/bin
-
-# lpiot 2023-11-19: now retrieved from jpetazzo/shpod
-# Copy lot of tools from jpetazzo/shpod
-# TODO: get an always up-to-date shpod
-COPY --from=jpetazzo/shpod --link --exclude=/usr/local/bin/docker-compose /usr/local/bin/* /usr/local/bin
-COPY --from=jpetazzo/shpod --link /usr/bin/yq /usr/bin
-COPY --from=jpetazzo/shpod --link /usr/share/bash-completion/* /usr/share/bash-completion
 
 # Copy of Digital Ocean CLI
 COPY --from=do --link /usr/bin/doctl /usr/bin/doctl
@@ -210,6 +237,13 @@ COPY --from=tf --link /root/.bashrc ./.bashrc.d/completion_terraform.sh
 # Copy of Packer
 COPY --from=pac --link /usr/bin/packer /usr/bin/packer
 COPY --from=pac --link /root/.bashrc  ./.bashrc.d/completion_packer.sh
+
+# lpiot 2023-11-19: now retrieved from jpetazzo/shpod
+# Copy lot of tools from jpetazzo/shpod
+# TODO: get an always up-to-date shpod
+COPY --from=shpod --link --exclude=/usr/local/bin/docker-compose /usr/local/bin/* /usr/local/bin
+COPY --from=shpod --link /usr/bin/yq /usr/bin
+COPY --from=shpod --link /usr/share/bash-completion/* /usr/share/bash-completion
 
 # ----- GCloud SDK install
 RUN <<EOT bash
