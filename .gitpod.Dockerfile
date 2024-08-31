@@ -1,3 +1,6 @@
+# syntax=docker/dockerfile:1.7-labs
+# lpiot-20240831: specific syntax needed for COPY --exclude feature
+
 # -----------------------------------------------------------------------------
 # Common ARGs
 # -----------------------------------------------------------------------------
@@ -179,30 +182,10 @@ COPY --from=sops /usr/local/bin/sops /usr/local/bin
 
 # lpiot 2023-11-19: now retrieved from jpetazzo/shpod
 # Copy lot of tools from jpetazzo/shpod
-COPY --from=jpetazzo/shpod /usr/local/bin/crane /usr/local/bin
-COPY --from=jpetazzo/shpod /usr/local/bin/helm /usr/local/bin
-COPY --from=jpetazzo/shpod /usr/local/bin/httping /usr/local/bin
-COPY --from=jpetazzo/shpod /usr/local/bin/jid /usr/local/bin
-COPY --from=jpetazzo/shpod /usr/local/bin/k9s /usr/local/bin
-COPY --from=jpetazzo/shpod /usr/local/bin/kapp /usr/local/bin
-COPY --from=jpetazzo/shpod /usr/local/bin/kctx /usr/local/bin
-COPY --from=jpetazzo/shpod /usr/local/bin/kns /usr/local/bin
-COPY --from=jpetazzo/shpod /usr/local/bin/kube-linter /usr/local/bin
-COPY --from=jpetazzo/shpod /usr/local/bin/kubent /usr/local/bin
-COPY --from=jpetazzo/shpod /usr/local/bin/kubeseal /usr/local/bin
-COPY --from=jpetazzo/shpod /usr/local/bin/kustomize /usr/local/bin
-COPY --from=jpetazzo/shpod /usr/local/bin/ngrok /usr/local/bin
-COPY --from=jpetazzo/shpod /usr/local/bin/popeye /usr/local/bin
-COPY --from=jpetazzo/shpod /usr/local/bin/regctl /usr/local/bin
-COPY --from=jpetazzo/shpod /usr/local/bin/setup-tailhist.sh /usr/local/bin
-COPY --from=jpetazzo/shpod /usr/local/bin/ship /usr/local/bin
-COPY --from=jpetazzo/shpod /usr/local/bin/skaffold /usr/local/bin
-COPY --from=jpetazzo/shpod /usr/local/bin/stern /usr/local/bin
-COPY --from=jpetazzo/shpod /usr/local/bin/tilt /usr/local/bin
-COPY --from=jpetazzo/shpod /usr/local/bin/velero /usr/local/bin
-COPY --from=jpetazzo/shpod /usr/local/bin/ytt /usr/local/bin
-COPY --from=jpetazzo/shpod /usr/bin/yq /usr/bin
-COPY --from=jpetazzo/shpod /usr/share/bash-completion/* /usr/share/bash-completion
+# TODO: get an always up-to-date shpod
+COPY --from=jpetazzo/shpod --link --exclude=/usr/local/bin/docker-compose /usr/local/bin/* /usr/local/bin
+COPY --from=jpetazzo/shpod --link /usr/bin/yq /usr/bin
+COPY --from=jpetazzo/shpod --link /usr/share/bash-completion/* /usr/share/bash-completion
 
 # Copy of Digital Ocean CLI
 COPY --from=do /usr/bin/doctl /usr/bin/doctl
@@ -248,16 +231,16 @@ RUN echo "deb [signed-by=/usr/share/keyrings/cloud.google.gpg] https://packages.
 # RUN curl -s "https://raw.githubusercontent.com/kubernetes-sigs/kustomize/master/hack/install_kustomize.sh"  | bash && \
 #     sudo mv kustomize /usr/local/bin
 
-# ----- Flux install
-# more detail here: https://fluxcd.io/docs/get-started/
+# # ----- Flux install
+# # more detail here: https://fluxcd.io/docs/get-started/
 
-RUN curl -s https://fluxcd.io/install.sh | bash
+# RUN curl -s https://fluxcd.io/install.sh | bash
 
-# ----- Kubectl install
+# # ----- Kubectl install
 
-RUN curl -LO https://storage.googleapis.com/kubernetes-release/release/$(curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt)/bin/linux/amd64/kubectl && \
-    chmod +x ./kubectl && \
-    sudo mv ./kubectl /usr/local/bin/kubectl
+# RUN curl -LO https://storage.googleapis.com/kubernetes-release/release/$(curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt)/bin/linux/amd64/kubectl && \
+#     chmod +x ./kubectl && \
+#     sudo mv ./kubectl /usr/local/bin/kubectl
 
 # ----- common tools install
 RUN sudo apt-get update -y
