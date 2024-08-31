@@ -64,6 +64,7 @@ RUN apt-get update -y && \
     mv sops-v${SOPS_VERSION}.linux.amd64 /usr/local/bin/sops && \
     chmod +x /usr/local/bin/sops
 
+
 # -----------------------------------------------------------------------------
 # Digital Ocean
 # -----------------------------------------------------------------------------
@@ -82,6 +83,7 @@ RUN wget https://github.com/digitalocean/doctl/releases/download/v${DOCTL_VERSIO
 # Add Digital Ocean CLI autocompletion in BASH
 RUN ./doctl completion bash > ~/completion_doctl.sh
 
+
 # -----------------------------------------------------------------------------
 # Scaleway
 # -----------------------------------------------------------------------------
@@ -92,6 +94,7 @@ ARG DOCKER_IMAGES_MAINTAINER
 LABEL maintainer=${DOCKER_IMAGES_MAINTAINER}
 
 RUN curl -s https://raw.githubusercontent.com/scaleway/scaleway-cli/master/scripts/get.sh | sh
+
 
 # -----------------------------------------------------------------------------
 # Terraform
@@ -113,6 +116,7 @@ RUN wget https://releases.hashicorp.com/terraform/${TERRAFORM_VERSION}/terraform
 RUN touch ~/.bashrc && \
     terraform --install-autocomplete
 
+
 # -----------------------------------------------------------------------------
 # Packer
 # -----------------------------------------------------------------------------
@@ -133,6 +137,7 @@ RUN wget https://releases.hashicorp.com/packer/${PACKER_VERSION}/packer_${PACKER
 RUN touch ~/.bashrc && \
     packer -autocomplete-install
 
+
 # -----------------------------------------------------------------------------
 # yq CLI tool
 # more detail here: https://lindevs.com/install-yq-on-ubuntu/
@@ -147,8 +152,9 @@ RUN touch ~/.bashrc && \
 # RUN wget -qO /usr/bin/yq  https://github.com/mikefarah/yq/releases/latest/download/yq_linux_amd64 && \
 #     chmod a+x /usr/bin/yq
 
+
 # -----------------------------------------------------------------------------
-# Final Image
+# Final Image(s)
 # -----------------------------------------------------------------------------
 FROM gitpod/workspace-python-3.12
 # as gitpod_workspace_gcloud
