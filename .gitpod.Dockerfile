@@ -196,20 +196,20 @@ COPY --from=jpetazzo/shpod --link /usr/bin/yq /usr/bin
 COPY --from=jpetazzo/shpod --link /usr/share/bash-completion/* /usr/share/bash-completion
 
 # Copy of Digital Ocean CLI
-COPY --from=do /usr/bin/doctl /usr/bin/doctl
-COPY --from=do /root/completion_doctl.sh ./.bashrc.d/
+COPY --from=do --link /usr/bin/doctl /usr/bin/doctl
+COPY --from=do --link /root/completion_doctl.sh ./.bashrc.d/
 
 # Copy of Scaleway CLI
-COPY --from=scw /usr/local/bin/scw /usr/bin/scw
+COPY --from=scw --link /usr/local/bin/scw /usr/bin/scw
 RUN scw autocomplete script shell=bash > ./.bashrc.d/completion_scw.sh
 
 # Copy of Terraform
-COPY --from=tf /usr/bin/terraform /usr/bin/terraform
-COPY --from=tf /root/.bashrc ./.bashrc.d/completion_terraform.sh
+COPY --from=tf --link /usr/bin/terraform /usr/bin/terraform
+COPY --from=tf --link /root/.bashrc ./.bashrc.d/completion_terraform.sh
 
 # Copy of Packer
-COPY --from=pac /usr/bin/packer /usr/bin/packer
-COPY --from=pac /root/.bashrc  ./.bashrc.d/completion_packer.sh
+COPY --from=pac --link /usr/bin/packer /usr/bin/packer
+COPY --from=pac --link /root/.bashrc  ./.bashrc.d/completion_packer.sh
 
 # ----- GCloud SDK install
 RUN <<EOT bash
@@ -254,7 +254,7 @@ EOT
 RUN sudo apt-get update -y && \
     sudo apt-get install -y jq tmux vim
 # lpiot 2023-11-19: now retrieved from jpetazzo/shpod
-# COPY --from=yq /usr/bin/yq /usr/bin/yq
+# COPY --from=yq --link /usr/bin/yq /usr/bin/yq
 
 # ----- prerequisites for container.training labs
 RUN pip install git+https://github.com/lilydjwg/pssh
