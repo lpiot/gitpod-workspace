@@ -245,50 +245,28 @@ COPY --from=shpod --link --exclude=/usr/local/bin/docker-compose /usr/local/bin/
 COPY --from=shpod --link /usr/bin/yq /usr/bin
 COPY --from=shpod --link /usr/share/bash-completion/* /usr/share/bash-completion
 
-# ----- GCloud SDK install
-RUN <<EOT bash
-    sudo apt-get update -y
-    # Add pre-requisites
-    sudo apt-get install -y apt-transport-https ca-certificates gnupg
-    # Add distribution URI for GCloud SDK as a package source
-    echo "deb [signed-by=/usr/share/keyrings/cloud.google.gpg] https://packages.cloud.google.com/apt cloud-sdk main" | sudo tee -a /etc/apt/sources.list.d/google-cloud-sdk.list && \
-    # Add Google Cloud public key
-    curl https://packages.cloud.google.com/apt/doc/apt-key.gpg | sudo apt-key --keyring /usr/share/keyrings/cloud.google.gpg add -
-    sudo apt-get update
-    sudo apt-get install -y google-cloud-sdk
-    # sudo apt-get install -y kubectl
-    sudo rm -Rf /usr/lib/google-cloud-sdk/platform/bundledpythonunix
-    sudo rm -Rf ./.sdkman
-EOT
-
-# lpiot 2023-11-19: now retrieved from jpetazzo/shpod
-# # ----- Helm install
-# # more details here: https://helm.sh/docs/intro/install/
-
-# RUN curl https://raw.githubusercontent.com/helm/helm/master/scripts/get-helm-3 | bash
-
-# # ----- Kustomize install
-# # more detail here: https://kubectl.docs.kubernetes.io/installation/kustomize/
-
-# RUN curl -s "https://raw.githubusercontent.com/kubernetes-sigs/kustomize/master/hack/install_kustomize.sh"  | bash && \
-#     sudo mv kustomize /usr/local/bin
-
-# # ----- Flux install
-# # more detail here: https://fluxcd.io/docs/get-started/
-
-# RUN curl -s https://fluxcd.io/install.sh | bash
-
-# # ----- Kubectl install
-
-# RUN curl -LO https://storage.googleapis.com/kubernetes-release/release/$(curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt)/bin/linux/amd64/kubectl && \
-#     chmod +x ./kubectl && \
-#     sudo mv ./kubectl /usr/local/bin/kubectl
-
 # ----- common tools install
-RUN sudo apt-get update -y && \
-    sudo apt-get install -y jq tmux vim
+RUN <<EOF bash
+    sudo apt-get update -y
+    sudo apt-get install -y jq tmux vim \
+         apt-transport-https ca-certificates gnupg
+EOF
+
 # lpiot 2023-11-19: now retrieved from jpetazzo/shpod
 # COPY --from=yq --link /usr/bin/yq /usr/bin/yq
 
 # ----- prerequisites for container.training labs
 RUN pip install git+https://github.com/lilydjwg/pssh
+
+# ----- GCloud SDK install
+RUN <<EOT bash
+    # Add distribution URI for GCloud SDK as a package source
+    echo "deb [signed-by=/usr/share/keyrings/cloud.google.gpg] https://packages.cloud.google.com/apt cloud-sdk main" | sudo tee -a /etc/apt/sources.list.d/google-cloud-sdk.list && \
+    # Add Google Cloud public key
+    curl https://packages.cloud.google.com/apt/doc/apt-key.gpg | sudo apt-key --keyring /usr/share/keyrings/cloud.google.gpg add -
+    sudo apt-get update -y
+    sudo apt-get install -y google-cloud-sdk
+    # sudo apt-get install -y kubectl
+    sudo rm -Rf /usr/lib/google-cloud-sdk/platform/bundledpythonunix \
+                ./.sdkman
+EOT
