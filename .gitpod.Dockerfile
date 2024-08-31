@@ -35,8 +35,9 @@ ARG DOCKER_IMAGES_MAINTAINER
 
 LABEL maintainer=${DOCKER_IMAGES_MAINTAINER}
 
-RUN apt-get update -y
-RUN apt-get install -y wget unzip curl
+RUN apt-get update -y && \
+    apt-get install -y curl unzip wget
+
 
 # -----------------------------------------------------------------------------
 # Starship in RUST
@@ -48,9 +49,11 @@ ARG DOCKER_IMAGES_MAINTAINER
 
 LABEL maintainer=${DOCKER_IMAGES_MAINTAINER}
         
-RUN wget https://starship.rs/install.sh && \
-    chmod +x install.sh && \
-    ./install.sh --verbose --yes    
+RUN <<EOF bash
+    wget https://starship.rs/install.sh
+    chmod +x install.sh
+    ./install.sh --verbose --yes
+EOF
 
 
 # -----------------------------------------------------------------------------
@@ -64,12 +67,12 @@ ARG SOPS_VERSION
 LABEL maintainer=${DOCKER_IMAGES_MAINTAINER}
 
 # Install AGE
-RUN apt-get update -y && \
-    apt-get install -y age && \
-    wget https://github.com/getsops/sops/releases/download/v${SOPS_VERSION}/sops-v${SOPS_VERSION}.linux.amd64 && \
-    mv sops-v${SOPS_VERSION}.linux.amd64 /usr/local/bin/sops && \
+RUN <<EOF bash
+    apt-get install -y age
+    wget https://github.com/getsops/sops/releases/download/v${SOPS_VERSION}/sops-v${SOPS_VERSION}.linux.amd64
+    mv sops-v${SOPS_VERSION}.linux.amd64 /usr/local/bin/sops
     chmod +x /usr/local/bin/sops
-
+EOF
 
 # -----------------------------------------------------------------------------
 # Digital Ocean
@@ -82,12 +85,14 @@ ARG DOCTL_VERSION
 LABEL maintainer=${DOCKER_IMAGES_MAINTAINER}
 
 WORKDIR /usr/bin
-RUN wget https://github.com/digitalocean/doctl/releases/download/v${DOCTL_VERSION}/doctl-${DOCTL_VERSION}-linux-amd64.tar.gz && \
-    tar -xzf ./doctl-${DOCTL_VERSION}-linux-amd64.tar.gz && \
+RUN <<EOF bash
+    wget https://github.com/digitalocean/doctl/releases/download/v${DOCTL_VERSION}/doctl-${DOCTL_VERSION}-linux-amd64.tar.gz
+    tar -xzf ./doctl-${DOCTL_VERSION}-linux-amd64.tar.gz
     rm -f ./doctl-${DOCTL_VERSION}-linux-amd64.tar.gz
 
-# Add Digital Ocean CLI autocompletion in BASH
-RUN ./doctl completion bash > ~/completion_doctl.sh
+    # Add Digital Ocean CLI autocompletion in BASH
+    ./doctl completion bash > ~/completion_doctl.sh
+EOF
 
 
 # -----------------------------------------------------------------------------
@@ -114,14 +119,15 @@ LABEL maintainer=${DOCKER_IMAGES_MAINTAINER}
 
 # Terraform install
 WORKDIR /usr/bin
-RUN wget https://releases.hashicorp.com/terraform/${TERRAFORM_VERSION}/terraform_${TERRAFORM_VERSION}_linux_amd64.zip && \
-    unzip ./terraform_${TERRAFORM_VERSION}_linux_amd64.zip && \
+RUN <<EOF bash
+    wget https://releases.hashicorp.com/terraform/${TERRAFORM_VERSION}/terraform_${TERRAFORM_VERSION}_linux_amd64.zip
+    unzip ./terraform_${TERRAFORM_VERSION}_linux_amd64.zip
     rm -f ./terraform_${TERRAFORM_VERSION}_linux_amd64.zip
 
-# Add Terraform autocompletion in BASH
-RUN touch ~/.bashrc && \
+    # Add Terraform autocompletion in BASH
+    touch ~/.bashrc
     terraform --install-autocomplete
-
+EOF
 
 # -----------------------------------------------------------------------------
 # Packer
@@ -135,14 +141,15 @@ LABEL maintainer=${DOCKER_IMAGES_MAINTAINER}
 
 # Packer install
 WORKDIR /usr/bin
-RUN wget https://releases.hashicorp.com/packer/${PACKER_VERSION}/packer_${PACKER_VERSION}_linux_amd64.zip && \
-    unzip ./packer_${PACKER_VERSION}_linux_amd64.zip && \
+RUN <<EOF bash
+    wget https://releases.hashicorp.com/packer/${PACKER_VERSION}/packer_${PACKER_VERSION}_linux_amd64.zip
+    unzip ./packer_${PACKER_VERSION}_linux_amd64.zip
     rm -f ./packer_${PACKER_VERSION}_linux_amd64.zip
 
-# Add Packer autocompletion in BASH
-RUN touch ~/.bashrc && \
+    Add Packer autocompletion in BASH
+    touch ~/.bashrc
     packer -autocomplete-install
-
+EOF
 
 # -----------------------------------------------------------------------------
 # yq CLI tool
@@ -171,14 +178,15 @@ LABEL maintainer=${DOCKER_IMAGES_MAINTAINER}
 WORKDIR /home/gitpod
 
 # Copy of RUST awesome CLI tools
-COPY --from=starship /usr/local/bin/starship /usr/local/bin/
+COPY --from=starship --link /usr/local/bin/starship /usr/local/bin/
+# TODO: switch this part into starship build stage
 RUN starship init bash > ./.bashrc.d/completion_starship.sh
 
 # Copy of AGE
-COPY --from=sops /usr/bin/age /usr/local/bin
+COPY --from=sops --link /usr/bin/age /usr/local/bin
 
 # Copy of Mozilla SOPS
-COPY --from=sops /usr/local/bin/sops /usr/local/bin
+COPY --from=sops --link /usr/local/bin/sops /usr/local/bin
 
 # lpiot 2023-11-19: now retrieved from jpetazzo/shpod
 # Copy lot of tools from jpetazzo/shpod
@@ -195,29 +203,29 @@ COPY --from=do /root/completion_doctl.sh ./.bashrc.d/
 COPY --from=scw /usr/local/bin/scw /usr/bin/scw
 RUN scw autocomplete script shell=bash > ./.bashrc.d/completion_scw.sh
 
-
 # Copy of Terraform
 COPY --from=tf /usr/bin/terraform /usr/bin/terraform
 COPY --from=tf /root/.bashrc ./.bashrc.d/completion_terraform.sh
-
 
 # Copy of Packer
 COPY --from=pac /usr/bin/packer /usr/bin/packer
 COPY --from=pac /root/.bashrc  ./.bashrc.d/completion_packer.sh
 
 # ----- GCloud SDK install
-RUN sudo apt-get update -y && \
+RUN <<EOT bash
+    sudo apt-get update -y
     # Add pre-requisites
     sudo apt-get install -y apt-transport-https ca-certificates gnupg
     # Add distribution URI for GCloud SDK as a package source
-RUN echo "deb [signed-by=/usr/share/keyrings/cloud.google.gpg] https://packages.cloud.google.com/apt cloud-sdk main" | sudo tee -a /etc/apt/sources.list.d/google-cloud-sdk.list && \
+    echo "deb [signed-by=/usr/share/keyrings/cloud.google.gpg] https://packages.cloud.google.com/apt cloud-sdk main" | sudo tee -a /etc/apt/sources.list.d/google-cloud-sdk.list && \
     # Add Google Cloud public key
-    curl https://packages.cloud.google.com/apt/doc/apt-key.gpg | sudo apt-key --keyring /usr/share/keyrings/cloud.google.gpg add - && \
-    sudo apt-get update && \
-    sudo apt-get install -y google-cloud-sdk && \
-    # sudo apt-get install -y kubectl && \
-    sudo rm -Rf /usr/lib/google-cloud-sdk/platform/bundledpythonunix && \
+    curl https://packages.cloud.google.com/apt/doc/apt-key.gpg | sudo apt-key --keyring /usr/share/keyrings/cloud.google.gpg add -
+    sudo apt-get update
+    sudo apt-get install -y google-cloud-sdk
+    # sudo apt-get install -y kubectl
+    sudo rm -Rf /usr/lib/google-cloud-sdk/platform/bundledpythonunix
     sudo rm -Rf ./.sdkman
+EOT
 
 # lpiot 2023-11-19: now retrieved from jpetazzo/shpod
 # # ----- Helm install
@@ -243,8 +251,8 @@ RUN echo "deb [signed-by=/usr/share/keyrings/cloud.google.gpg] https://packages.
 #     sudo mv ./kubectl /usr/local/bin/kubectl
 
 # ----- common tools install
-RUN sudo apt-get update -y
-RUN sudo apt-get install -y jq tmux vim
+RUN sudo apt-get update -y && \
+    sudo apt-get install -y jq tmux vim
 # lpiot 2023-11-19: now retrieved from jpetazzo/shpod
 # COPY --from=yq /usr/bin/yq /usr/bin/yq
 
