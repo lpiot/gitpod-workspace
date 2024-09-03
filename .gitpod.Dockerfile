@@ -25,6 +25,9 @@ ARG HUGO_VERSION=0.134.0
 # Packer release version
 ARG PACKER_VERSION=1.11.2
 
+# shpod image verion
+ARG SHPOD_VERSION=1.31.0
+
 # Terraform release version
 ARG TERRAFORM_VERSION=1.9.5
 
@@ -193,20 +196,6 @@ EOF
 
 
 # -----------------------------------------------------------------------------
-# jpetazzo/shpod
-# -----------------------------------------------------------------------------
-FROM jpetazzo/shpod as shpod
-
-ARG DOCKER_IMAGES_MAINTAINER
-
-RUN <<EOF bash
-    apk add upx
-    upx /usr/local/bin/*
-    upx /usr/bin/yq
-EOF
-
-
-# -----------------------------------------------------------------------------
 # yq CLI tool
 # more detail here: https://lindevs.com/install-yq-on-ubuntu/
 # -----------------------------------------------------------------------------
@@ -227,6 +216,7 @@ EOF
 FROM ${GITPOD_IMAGE} as gitpod_workspace
 
 ARG DOCKER_IMAGES_MAINTAINER
+ARG SHPOD_VERSION
 
 LABEL maintainer=${DOCKER_IMAGES_MAINTAINER}
 
@@ -263,9 +253,9 @@ COPY --from=pac --link /root/.bashrc  ./.bashrc.d/completion_packer.sh
 # lpiot 2023-11-19: now retrieved from jpetazzo/shpod
 # Copy lot of tools from jpetazzo/shpod
 # TODO: get an always up-to-date shpod
-COPY --from=shpod --link --exclude=/usr/local/bin/docker-compose /usr/local/bin/* /usr/local/bin
-COPY --from=shpod --link /usr/bin/yq /usr/bin
-COPY --from=shpod --link /usr/share/bash-completion/* /usr/share/bash-completion
+COPY --from=ghcr.io/lpiot/shpod:v${SHPOD_VERSION} --link --exclude=/usr/local/bin/docker-compose /usr/local/bin/* /usr/local/bin
+COPY --from=ghcr.io/lpiot/shpod:v${SHPOD_VERSION} --link /usr/bin/yq /usr/bin
+COPY --from=ghcr.io/lpiot/shpod:v${SHPOD_VERSION} --link /usr/share/bash-completion/* /usr/share/bash-completion
 
 # ----- common tools install
 RUN <<EOF bash
