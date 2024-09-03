@@ -19,11 +19,14 @@ ARG SOPS_VERSION=3.9.0
 # Digital Ocean CLI release version
 ARG DOCTL_VERSION=1.111.0
 
-# Terraform release version
-ARG TERRAFORM_VERSION=1.9.5
+# Hugo Statis Site Generator
+ARG HUGO_VERSION=0.134.0
 
 # Packer release version
 ARG PACKER_VERSION=1.11.2
+
+# Terraform release version
+ARG TERRAFORM_VERSION=1.9.5
 
 
 # -----------------------------------------------------------------------------
@@ -38,6 +41,22 @@ LABEL maintainer=${DOCKER_IMAGES_MAINTAINER}
 RUN apt-get update -y && \
     apt-get install -y curl unzip upx wget
 
+
+# -----------------------------------------------------------------------------
+# Hugo
+# -----------------------------------------------------------------------------
+FROM base AS hugo
+
+ARG DOCKER_IMAGES_MAINTAINER
+ARG HUGO_VERSION
+
+LABEL maintainer=${DOCKER_IMAGES_MAINTAINER}
+        
+RUN <<EOF bash
+    wget https://github.com/gohugoio/hugo/releases/download/v${HUGO_VERSION}/hugo_${HUGO_VERSION}_linux-amd64.tar.gz
+    tar -xzf hugo_${HUGO_VERSION}_linux-amd64.tar.gz
+    cp -pr hugo /usr/local/bin/
+EOF
 
 # -----------------------------------------------------------------------------
 # Starship in RUST
@@ -225,6 +244,9 @@ COPY --from=sops --link /usr/local/bin/sops /usr/local/bin
 # Copy of Digital Ocean CLI
 COPY --from=do --link /usr/bin/doctl /usr/bin/doctl
 COPY --from=do --link /root/completion_doctl.sh ./.bashrc.d/
+
+# Copy of Hugo Static Site Generator
+COPY --from=hugo --link /usr/local/bin/hugo /usr/local/bin
 
 # Copy of Scaleway CLI
 COPY --from=scw --link /usr/local/bin/scw /usr/bin/scw
