@@ -10,8 +10,10 @@ ARG DOCKER_IMAGES_MAINTAINER="Ludovic Piot <ludovic.piot@thegaragebandofit.com>"
 # For consistency purpose, please use the same base as gitpod/workspace-full image
 # see: https://github.com/gitpod-io/workspace-images
 ARG BASE_IMAGE=ubuntu:22.04
-# ARG GITPOD_IMAGE=gitpod/workspace-python-3.12
-ARG GITPOD_IMAGE=gitpod/workspace-full
+ARG GITPOD_IMAGE=gitpod/workspace-python-3.12
+# ARG GITPOD_IMAGE=gitpod/workspace-full
+
+ARG CLOUDSHELL_IMAGE=gcr.io/cloudshell-images/cloudshell:latest
 
 # Mozilla SOPS release version
 ARG SOPS_VERSION=3.9.0
@@ -211,7 +213,7 @@ EOF
 
 
 # -----------------------------------------------------------------------------
-# Final Image(s)
+# Final Image(s) - GITPOD
 # -----------------------------------------------------------------------------
 FROM ${GITPOD_IMAGE} as gitpod_workspace
 
