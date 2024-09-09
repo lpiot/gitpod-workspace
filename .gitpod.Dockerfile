@@ -22,7 +22,7 @@ ARG SOPS_VERSION=3.9.0
 ARG DOCTL_VERSION=1.111.0
 
 # Hugo Statis Site Generator
-ARG HUGO_VERSION=0.134.0
+ARG HUGO_VERSION=0.134.1
 
 # Packer release version
 ARG PACKER_VERSION=1.11.2
@@ -58,8 +58,8 @@ ARG HUGO_VERSION
 LABEL maintainer=${DOCKER_IMAGES_MAINTAINER}
         
 RUN <<EOF bash
-    wget https://github.com/gohugoio/hugo/releases/download/v${HUGO_VERSION}/hugo_${HUGO_VERSION}_linux-amd64.tar.gz
-    tar -xzf hugo_${HUGO_VERSION}_linux-amd64.tar.gz
+    wget https://github.com/gohugoio/hugo/releases/download/v${HUGO_VERSION}/hugo_extended_${HUGO_VERSION}_linux-amd64.tar.gz
+    tar -xzf hugo_extended_${HUGO_VERSION}_linux-amd64.tar.gz
     cp -pr hugo /usr/local/bin/
 EOF
 
