@@ -42,6 +42,7 @@ vscode:
     - hashicorp.hcl
     - tamasfe.even-better-toml
     - lextudio.restructuredtext
+    - github.vscode-github-actions
 
 workspaceLocation:
   "."
