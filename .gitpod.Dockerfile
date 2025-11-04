@@ -16,7 +16,7 @@ LABEL maintainer="Ludovic Piot <ludovic.piot@thegaragebandofit.com>"
 
 RUN apt-get update -y
 RUN apt-get install -y cmake
-RUN cargo build starship --locked
+RUN cargo install starship --locked
 
 # -----------------------------------------------------------------------------
 # Digital Ocean
@@ -116,7 +116,7 @@ COPY --from=jpetazzo/shpod /usr/local/bin/ngrok /usr/local/bin
 COPY --from=jpetazzo/shpod /usr/local/bin/popeye /usr/local/bin
 COPY --from=jpetazzo/shpod /usr/local/bin/regctl /usr/local/bin
 COPY --from=jpetazzo/shpod /usr/local/bin/setup-tailhist.sh /usr/local/bin
-COPY --from=jpetazzo/shpod /usr/local/bin/ship /usr/local/bin
+#COPY --from=jpetazzo/shpod /usr/local/bin/ship /usr/local/bin
 COPY --from=jpetazzo/shpod /usr/local/bin/skaffold /usr/local/bin
 COPY --from=jpetazzo/shpod /usr/local/bin/stern /usr/local/bin
 COPY --from=jpetazzo/shpod /usr/local/bin/tilt /usr/local/bin
