@@ -1,0 +1,23 @@
+*.pyc
+*.swp
+*~
+
+**/terraform.tfstate
+**/terraform.tfstate.backup
+
+# unencrypted secrets
+/workspace/.secrets/
+/workspace/gitpod-workspace/.secrets/secrets.yml
+/workspace/gitpod-workspace/.secrets/gitpod_*-ed25519
+
+### macOS ###
+# General
+.DS_Store
+.AppleDouble
+.LSOverride
+
+### Windows ###
+# Windows thumbnail cache files
+Thumbs.db
+ehthumbs.db
+ehthumbs_vista.db

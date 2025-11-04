@@ -1,23 +1,30 @@
 image:
   # This image is built upon the following Dockerfile: .gitpod.Dockerfile
-  # ghcr.io/lpiot/gitpod-workspace
+  ghcr.io/lpiot/gitpod-workspace:test
   # You can dynamically build the image when you create a new GitPod workspace with the following lines
   # gitpod/workspace-full
-  file: .gitpod.Dockerfile
-additionalRepositories:
-    - url: https://github.com/musk8teers/container.training.git
-      # checkoutLocation is optional and relative to /workspaces.
-      # by default the location defaults to the repository name.
-      checkoutLocation: 'musk8teers/container.training'
-    - url: https://github.com/musk8teers/spring-music.git
-      # checkoutLocation is optional and relative to /workspaces.
-      # by default the location defaults to the repository name.
-      checkoutLocation: 'musk8teers/spring-music'
+  #lpiot/gitpod-workspace
+  # file: .gitpod.Dockerfile
+# additionalRepositories:
+#     - url: https://github.com/musk8teers/container.training.git
+#       # checkoutLocation is optional and relative to /workspaces.
+#       # by default the location defaults to the repository name.
+#       checkoutLocation: 'musk8teers/container.training'
+#     - url: https://github.com/musk8teers/spring-music.git
+#       # checkoutLocation is optional and relative to /workspaces.
+#       # by default the location defaults to the repository name.
+#       checkoutLocation: 'musk8teers/spring-music'
 tasks:
   - name: workspace configuration
     command: |
       mkdir -p /home/gitpod/.ssh
-      cp -pr /workspace/gitpod-workspace/ssh-config /home/gitpod/.ssh/config
+      ln -s /workspace/gitpod-workspace/config/ssh-config /home/gitpod/.ssh/config
+      ln -s /workspace/gitpod-workspace/config/starship.toml /home/gitpod/.config/
+      mkdir -p /workspace/.secrets
+      cp -pr /workspace/gitpod-workspace/.secrets/* /workspace/.secrets
+      echo ${SOPS_AGE_KEY_FILE} | base64 --decode > /workspace/.secrets/age-keys
+      awk '$0 ~ /public key/ {print $4}' /workspace/.secrets/age-keys > /workspace/.secrets/age-public-key
+      sops -d --age $(cat /workspace/.secrets/age-keys) /workspace/.secrets/secrets-enc.yml > /workspace/.secrets/secrets.yml
   - name: pre-requisite for container.training
     before: |
       echo "pre-requisite for container.training"
@@ -26,11 +33,16 @@ tasks:
       echo "Activate SSH agent"
       eval $(ssh-agent) ; ssh-add && echo "SSH_AUTH_SOCK=${SSH_AUTH_SOCK}"
       echo "Configure Digital Ocean CLI"
-      doctl auth init --access-token $(tail -1 /workspace/.secrets/gitpod-digitalocean_highfive-m6.token)
+      doctl auth init --access-token $(tail -1 /workspace/.secrets/gitpod-digitalocean.token)
 vscode:
   extensions:
     - yzhang.markdown-all-in-one
     - Gruntfuggly.todo-tree
     - hashicorp.terraform
+    - hashicorp.hcl
+    - tamasfe.even-better-toml
+    - lextudio.restructuredtext
+    - github.vscode-github-actions
+
 workspaceLocation:
   "."
