@@ -1,7 +1,7 @@
 # -----------------------------------------------------------------------------
 # Base install
 # -----------------------------------------------------------------------------
-FROM ubuntu:22.04 as base
+FROM ubuntu:25.04 as base
 LABEL maintainer="Ludovic Piot <ludovic.piot@thegaragebandofit.com>"
 
 RUN apt-get update -y
