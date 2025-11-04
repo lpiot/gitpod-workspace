@@ -9,7 +9,7 @@ ARG DOCKER_IMAGES_MAINTAINER="Ludovic Piot <ludovic.piot@thegaragebandofit.com>"
 
 # For consistency purpose, please use the same base as gitpod/workspace-full image
 # see: https://github.com/gitpod-io/workspace-images
-ARG BASE_IMAGE=ubuntu:22.04
+ARG BASE_IMAGE=ubuntu:25.04
 ARG GITPOD_IMAGE=gitpod/workspace-python-3.12
 # ARG GITPOD_IMAGE=gitpod/workspace-full
 
