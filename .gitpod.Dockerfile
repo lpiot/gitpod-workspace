@@ -25,7 +25,7 @@ FROM base as do
 LABEL maintainer="Ludovic Piot <ludovic.piot@thegaragebandofit.com>"
 
 # Digital Ocean CLI vars
-ARG DOCTL_VERSION=1.100.0
+ARG DOCTL_VERSION=1.146.0
 
 WORKDIR /usr/bin
 RUN wget https://github.com/digitalocean/doctl/releases/download/v${DOCTL_VERSION}/doctl-${DOCTL_VERSION}-linux-amd64.tar.gz && \
@@ -41,7 +41,7 @@ FROM base as tf
 LABEL maintainer="Ludovic Piot <ludovic.piot@thegaragebandofit.com>"
 
 # Terraform vars
-ARG TERRAFORM_VERSION=1.6.3
+ARG TERRAFORM_VERSION=1.13.4
 
 # Terraform install
 WORKDIR /usr/bin
@@ -60,7 +60,7 @@ FROM base as pac
 LABEL maintainer="Ludovic Piot <ludovic.piot@thegaragebandofit.com>"
 
 # Packer vars
-ARG PACKER_VERSION=1.9.4
+ARG PACKER_VERSION=1.14.2
 
 # Packer install
 WORKDIR /usr/bin
