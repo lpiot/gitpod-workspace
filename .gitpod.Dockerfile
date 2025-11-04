@@ -19,19 +19,19 @@ ARG CLOUDSHELL_IMAGE=gcr.io/cloudshell-images/cloudshell:latest
 ARG SOPS_VERSION=3.9.0
 
 # Digital Ocean CLI release version
-ARG DOCTL_VERSION=1.111.0
+ARG DOCTL_VERSION=1.146.0
 
 # Hugo Statis Site Generator
-ARG HUGO_VERSION=0.134.1
+ARG HUGO_VERSION=0.152.2
 
 # Packer release version
-ARG PACKER_VERSION=1.11.2
+ARG PACKER_VERSION=1.14.2
 
 # shpod image verion
-ARG SHPOD_VERSION=1.31.0
+ARG SHPOD_VERSION=lpiot_20251104
 
 # Terraform release version
-ARG TERRAFORM_VERSION=1.9.5
+ARG TERRAFORM_VERSION=1.13.4
 
 
 # -----------------------------------------------------------------------------
