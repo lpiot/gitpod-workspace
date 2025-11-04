@@ -255,9 +255,9 @@ COPY --from=pac --link /root/.bashrc  ./.bashrc.d/completion_packer.sh
 # lpiot 2023-11-19: now retrieved from jpetazzo/shpod
 # Copy lot of tools from jpetazzo/shpod forked to a personnal image
 # COPY cmd cannot use ARG variables vOv
-COPY --from=ghcr.io/lpiot/shpod:v1.31.0 --link --exclude=/usr/local/bin/docker-compose /usr/local/bin/* /usr/local/bin
-COPY --from=ghcr.io/lpiot/shpod:v1.31.0 --link /usr/bin/yq /usr/bin
-COPY --from=ghcr.io/lpiot/shpod:v1.31.0 --link /usr/share/bash-completion/* /usr/share/bash-completion
+COPY --from=ghcr.io/lpiot/shpod:lpiot_20251104 --link --exclude=/usr/local/bin/docker-compose /usr/local/bin/* /usr/local/bin
+COPY --from=ghcr.io/lpiot/shpod:lpiot_20251104 --link /usr/bin/yq /usr/bin
+COPY --from=ghcr.io/lpiot/shpod:lpiot_20251104 --link /usr/share/bash-completion/* /usr/share/bash-completion
 
 # ----- common tools install
 RUN <<EOF bash
