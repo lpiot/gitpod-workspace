@@ -12,7 +12,8 @@ ARG DOCKER_IMAGES_MAINTAINER="Ludovic Piot <ludovic.piot@thegaragebandofit.com>"
 # ARG BASE_IMAGE=ubuntu:25.04
 ARG BASE_IMAGE=alpine:3.23
 
-ARG GITPOD_IMAGE=gitpod/workspace-python-3.12
+ARG GITPOD_IMAGE=alpine:3.23
+# ARG GITPOD_IMAGE=gitpod/workspace-python-3.12
 # ARG GITPOD_IMAGE=gitpod/workspace-full
 
 # ARG CLOUDSHELL_IMAGE=gcr.io/cloudshell-images/cloudshell:latest
