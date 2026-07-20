@@ -267,14 +267,20 @@ COPY --from=ghcr.io/lpiot/shpod:lpiot_20251104 --link /usr/share/bash-completion
 RUN pip install git+https://github.com/lilydjwg/pssh
 
 # ----- GCloud SDK install
-RUN <<EOT bash
-    # Add distribution URI for GCloud SDK as a package source
-    echo "deb [signed-by=/usr/share/keyrings/cloud.google.gpg] https://packages.cloud.google.com/apt cloud-sdk main" | sudo tee -a /etc/apt/sources.list.d/google-cloud-sdk.list && \
-    # Add Google Cloud public key
-    curl https://packages.cloud.google.com/apt/doc/apt-key.gpg | sudo apt-key --keyring /usr/share/keyrings/cloud.google.gpg add -
-    sudo apt-get update -y
-    sudo apt-get install -y google-cloud-sdk
-    # sudo apt-get install -y kubectl
-    sudo rm -Rf /usr/lib/google-cloud-sdk/platform/bundledpythonunix \
-                ./.sdkman
-EOT
+
+# RUN <<EOT bash
+#     # Add distribution URI for GCloud SDK as a package source
+#     echo "deb [signed-by=/usr/share/keyrings/cloud.google.gpg] https://packages.cloud.google.com/apt cloud-sdk main" | sudo tee -a /etc/apt/sources.list.d/google-cloud-sdk.list && \
+#     # Add Google Cloud public key
+#     curl https://packages.cloud.google.com/apt/doc/apt-key.gpg | sudo apt-key --keyring /usr/share/keyrings/cloud.google.gpg add -
+#     sudo apt-get update -y
+#     sudo apt-get install -y google-cloud-sdk
+#     # sudo apt-get install -y kubectl
+#     sudo rm -Rf /usr/lib/google-cloud-sdk/platform/bundledpythonunix \
+#                 ./.sdkman
+# EOT
+
+RUN wget https://dl.google.com/dl/cloudsdk/channels/rapid/downloads/google-cloud-cli-linux-x86.tar.gz && \
+    tar -xzf google-cloud-cli-linux-x86.tar.gz && \
+    ./google-cloud-sdk/install.sh --bash-completion true --install-python false --path-update true --rc-path /home/gitpod/.bashrc --update-installed-components --usage-reporting false && \
+    rm -f google-cloud-cli-linux-x86.tar.gz
