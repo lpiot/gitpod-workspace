@@ -15,9 +15,6 @@ ARG GITPOD_IMAGE=gitpod/workspace-python-3.12
 
 ARG CLOUDSHELL_IMAGE=gcr.io/cloudshell-images/cloudshell:latest
 
-# Mozilla SOPS release version
-ARG SOPS_VERSION=3.9.0
-
 # Digital Ocean CLI release version
 ARG DOCTL_VERSION=1.146.0
 
@@ -87,18 +84,25 @@ EOF
 FROM base as sops
 
 ARG DOCKER_IMAGES_MAINTAINER
-ARG SOPS_VERSION
+
+# Mozilla SOPS release version
+# https://github.com/getsops/sops/releases/
+ARG SOPS_VERSION=3.13.2
 
 LABEL maintainer=${DOCKER_IMAGES_MAINTAINER}
 
-# Install AGE
-RUN <<EOF bash
-    apt-get install -y age
-    wget https://github.com/getsops/sops/releases/download/v${SOPS_VERSION}/sops-v${SOPS_VERSION}.linux.amd64
-    mv sops-v${SOPS_VERSION}.linux.amd64 /usr/local/bin/sops
-    chmod +x /usr/local/bin/sops
+# Mozilla SOPS
+COPY --from=ghcr.io/getsops/sops:v${SOPS_VERSION}-alpine /usr/local/bin/sops /usr/local/bin
 
-EOF
+# Install AGE
+RUN apk add age
+
+# RUN <<EOF bash
+#     apt-get install -y age
+#     wget https://github.com/getsops/sops/releases/download/v${SOPS_VERSION}/sops-v${SOPS_VERSION}.linux.amd64
+#     mv sops-v${SOPS_VERSION}.linux.amd64 /usr/local/bin/sops
+#     chmod +x /usr/local/bin/sops
+# EOF
 
 # -----------------------------------------------------------------------------
 # Digital Ocean
