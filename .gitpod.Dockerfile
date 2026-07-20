@@ -26,9 +26,6 @@ ARG PACKER_VERSION=1.14.2
 # shpod image verion
 ARG SHPOD_VERSION=lpiot_20251104
 
-# Terraform release version
-ARG TERRAFORM_VERSION=1.13.4
-
 
 # -----------------------------------------------------------------------------
 # Base install
@@ -155,7 +152,10 @@ EOF
 FROM base as tf
 
 ARG DOCKER_IMAGES_MAINTAINER
-ARG TERRAFORM_VERSION
+
+# Terraform release version
+# https://releases.hashicorp.com/terraform
+ARG TERRAFORM_VERSION=1.15.8
 
 LABEL maintainer=${DOCKER_IMAGES_MAINTAINER}
 
@@ -165,9 +165,6 @@ RUN <<EOF bash
     wget https://releases.hashicorp.com/terraform/${TERRAFORM_VERSION}/terraform_${TERRAFORM_VERSION}_linux_amd64.zip
     unzip ./terraform_${TERRAFORM_VERSION}_linux_amd64.zip
     rm -f ./terraform_${TERRAFORM_VERSION}_linux_amd64.zip
-
-    # Compress binaries
-    upx /usr/local/bin/terraform
  
     # Add Terraform autocompletion in BASH
     touch ~/.bashrc
