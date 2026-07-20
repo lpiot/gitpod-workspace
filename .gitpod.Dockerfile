@@ -102,7 +102,8 @@ ARG SOPS_VERSION=3.13.2
 LABEL maintainer=${DOCKER_IMAGES_MAINTAINER}
 
 # Mozilla SOPS
-COPY --from=ghcr.io/getsops/sops:v${SOPS_VERSION}-alpine /usr/local/bin/sops /usr/local/bin
+# FIXME: remove hard-typed version
+COPY --from=ghcr.io/getsops/sops:v3.13.2-alpine /usr/local/bin/sops /usr/local/bin
 
 # Install AGE
 RUN apk add age
