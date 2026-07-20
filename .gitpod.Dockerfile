@@ -41,33 +41,6 @@ RUN apk update && \
 
 
 # -----------------------------------------------------------------------------
-# Mozilla SOPS & AGE
-# -----------------------------------------------------------------------------
-FROM base as sops
-
-ARG DOCKER_IMAGES_MAINTAINER
-
-# Mozilla SOPS release version
-# https://github.com/getsops/sops/releases/
-ARG SOPS_VERSION=3.13.2
-
-LABEL maintainer=${DOCKER_IMAGES_MAINTAINER}
-
-# Mozilla SOPS
-COPY --from=ghcr.io/getsops/sops:v${SOPS_VERSION}-alpine /usr/local/bin/sops /usr/local/bin
-
-# Install AGE
-RUN apk add age
-
-# RUN <<EOF bash
-#     apt-get install -y age
-#     wget https://github.com/getsops/sops/releases/download/v${SOPS_VERSION}/sops-v${SOPS_VERSION}.linux.amd64
-#     mv sops-v${SOPS_VERSION}.linux.amd64 /usr/local/bin/sops
-#     chmod +x /usr/local/bin/sops
-# EOF
-
-
-# -----------------------------------------------------------------------------
 # Digital Ocean CLI
 # -----------------------------------------------------------------------------
 FROM base as do
@@ -110,6 +83,33 @@ RUN <<EOF bash
     tar -xzf hugo_extended_${HUGO_VERSION}_linux-amd64.tar.gz
     cp -pr hugo /usr/local/bin/
 EOF
+
+
+# -----------------------------------------------------------------------------
+# Mozilla SOPS & AGE
+# -----------------------------------------------------------------------------
+FROM base as sops
+
+ARG DOCKER_IMAGES_MAINTAINER
+
+# Mozilla SOPS release version
+# https://github.com/getsops/sops/releases/
+ARG SOPS_VERSION=3.13.2
+
+LABEL maintainer=${DOCKER_IMAGES_MAINTAINER}
+
+# Mozilla SOPS
+COPY --from=ghcr.io/getsops/sops:v${SOPS_VERSION}-alpine /usr/local/bin/sops /usr/local/bin
+
+# Install AGE
+RUN apk add age
+
+# RUN <<EOF bash
+#     apt-get install -y age
+#     wget https://github.com/getsops/sops/releases/download/v${SOPS_VERSION}/sops-v${SOPS_VERSION}.linux.amd64
+#     mv sops-v${SOPS_VERSION}.linux.amd64 /usr/local/bin/sops
+#     chmod +x /usr/local/bin/sops
+# EOF
 
 
 # -----------------------------------------------------------------------------
@@ -209,10 +209,6 @@ LABEL maintainer=${DOCKER_IMAGES_MAINTAINER}
 
 WORKDIR /home/gitpod
 
-# Copy of Mozilla SOPS
-COPY --from=sops --link /usr/bin/age /usr/local/bin
-COPY --from=sops --link /usr/local/bin/sops /usr/local/bin
-
 # Copy of Digital Ocean CLI
 COPY --from=do --link /usr/bin/doctl /usr/bin/doctl
 COPY --from=do --link /root/completion_doctl.sh ./.bashrc.d/
@@ -220,13 +216,17 @@ COPY --from=do --link /root/completion_doctl.sh ./.bashrc.d/
 # Copy of Hugo Static Site Generator
 COPY --from=hugo --link /usr/local/bin/hugo /usr/local/bin
 
-# Copy of Scaleway CLI
-COPY --from=scw --link /usr/local/bin/scw /usr/bin/scw
-#RUN scw autocomplete script shell=bash > ./.bashrc.d/completion_scw.sh
+# Copy of Mozilla SOPS
+COPY --from=sops --link /usr/bin/age /usr/local/bin
+COPY --from=sops --link /usr/local/bin/sops /usr/local/bin
 
 # Copy of Packer
 COPY --from=pac --link /usr/bin/packer /usr/bin/packer
 COPY --from=pac --link /root/.bashrc  ./.bashrc.d/completion_packer.sh
+
+# Copy of Scaleway CLI
+COPY --from=scw --link /usr/local/bin/scw /usr/bin/scw
+#RUN scw autocomplete script shell=bash > ./.bashrc.d/completion_scw.sh
 
 # Copy of Starship
 COPY --from=starship --link /usr/local/bin/starship /usr/local/bin/
