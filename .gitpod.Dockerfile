@@ -255,6 +255,8 @@ COPY --from=pac --link /root/.bashrc  ./.bashrc.d/completion_packer.sh
 COPY --from=scw --link /usr/local/bin/scw /usr/bin/scw
 COPY --from=scw --link ./.bashrc.d/completion_scw.sh ./.bashrc.d/completion_scw.sh
 
+# Copy of shpod utilities
+COPY --from=ghcr.io/jpetazzo/shpod:latest --link /usr/local/bin/* /usr/local/bin/
 
 # Copy of Starship
 COPY --from=starship --link /usr/local/bin/starship /usr/local/bin/
@@ -267,9 +269,11 @@ COPY --from=tf --link /root/.bashrc ./.bashrc.d/completion_terraform.sh
 # lpiot 2023-11-19: now retrieved from jpetazzo/shpod
 # Copy lot of tools from jpetazzo/shpod forked to a personnal image
 # COPY cmd cannot use ARG variables vOv
-COPY --from=ghcr.io/lpiot/shpod:lpiot_20251104 --link --exclude=/usr/local/bin/docker-compose /usr/local/bin/* /usr/local/bin
-COPY --from=ghcr.io/lpiot/shpod:lpiot_20251104 --link /usr/share/bash-completion/* /usr/share/bash-completion
+# COPY --from=ghcr.io/lpiot/shpod:lpiot_20251104 --link --exclude=/usr/local/bin/docker-compose /usr/local/bin/* /usr/local/bin
+# COPY --from=ghcr.io/lpiot/shpod:lpiot_20251104 --link /usr/share/bash-completion/* /usr/share/bash-completion
 
+# ----- Python3 install
+# RUN apk add py3-pip
 
 # ----- prerequisites for container.training labs
 # RUN pip install git+https://github.com/lilydjwg/pssh
