@@ -15,10 +15,7 @@ ARG BASE_IMAGE=alpine:3.23
 ARG GITPOD_IMAGE=gitpod/workspace-python-3.12
 # ARG GITPOD_IMAGE=gitpod/workspace-full
 
-ARG CLOUDSHELL_IMAGE=gcr.io/cloudshell-images/cloudshell:latest
-
-# Hugo Statis Site Generator
-ARG HUGO_VERSION=0.152.2
+# ARG CLOUDSHELL_IMAGE=gcr.io/cloudshell-images/cloudshell:latest
 
 # shpod image verion
 ARG SHPOD_VERSION=lpiot_20251104
@@ -42,22 +39,6 @@ RUN apk update && \
 #          apt-transport-https ca-certificates gnupg
 # EOF
 
-
-# -----------------------------------------------------------------------------
-# Hugo
-# -----------------------------------------------------------------------------
-FROM base AS hugo
-
-ARG DOCKER_IMAGES_MAINTAINER
-ARG HUGO_VERSION
-
-LABEL maintainer=${DOCKER_IMAGES_MAINTAINER}
-        
-RUN <<EOF bash
-    wget https://github.com/gohugoio/hugo/releases/download/v${HUGO_VERSION}/hugo_extended_${HUGO_VERSION}_linux-amd64.tar.gz
-    tar -xzf hugo_extended_${HUGO_VERSION}_linux-amd64.tar.gz
-    cp -pr hugo /usr/local/bin/
-EOF
 
 # -----------------------------------------------------------------------------
 # Starship in RUST
@@ -125,6 +106,26 @@ RUN <<EOF bash
 
     # Add Digital Ocean CLI autocompletion in BASH
     ./doctl completion bash > ~/completion_doctl.sh
+EOF
+
+
+# -----------------------------------------------------------------------------
+# Hugo
+# -----------------------------------------------------------------------------
+FROM base AS hugo
+
+ARG DOCKER_IMAGES_MAINTAINER
+
+# Hugo Statis Site Generator
+# https://github.com/gohugoio/hugo/releases
+ARG HUGO_VERSION=0.164.2
+
+LABEL maintainer=${DOCKER_IMAGES_MAINTAINER}
+        
+RUN <<EOF bash
+    wget https://github.com/gohugoio/hugo/releases/download/v${HUGO_VERSION}/hugo_extended_${HUGO_VERSION}_linux-amd64.tar.gz
+    tar -xzf hugo_extended_${HUGO_VERSION}_linux-amd64.tar.gz
+    cp -pr hugo /usr/local/bin/
 EOF
 
 
