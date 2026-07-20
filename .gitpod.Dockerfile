@@ -9,7 +9,9 @@ ARG DOCKER_IMAGES_MAINTAINER="Ludovic Piot <ludovic.piot@thegaragebandofit.com>"
 
 # For consistency purpose, please use the same base as gitpod/workspace-full image
 # see: https://github.com/gitpod-io/workspace-images
-ARG BASE_IMAGE=ubuntu:25.04
+# ARG BASE_IMAGE=ubuntu:25.04
+ARG BASE_IMAGE=alpine:3.23
+
 ARG GITPOD_IMAGE=gitpod/workspace-python-3.12
 # ARG GITPOD_IMAGE=gitpod/workspace-full
 
@@ -40,8 +42,14 @@ ARG DOCKER_IMAGES_MAINTAINER
 
 LABEL maintainer=${DOCKER_IMAGES_MAINTAINER}
 
-RUN apt-get update -y && \
-    apt-get install -y curl unzip upx wget
+# ----- common tools install
+RUN apk update && \
+    apk add ca-certificates curl git gnupg jq neovim tmux unzip wget yq
+# RUN <<EOF bash
+#     sudo apt-get update -y
+#     sudo apt-get install -y git jq tmux vim wget \
+#          apt-transport-https ca-certificates gnupg
+# EOF
 
 
 # -----------------------------------------------------------------------------
@@ -74,7 +82,6 @@ RUN <<EOF bash
     wget https://starship.rs/install.sh
     chmod +x install.sh
     ./install.sh --verbose --yes
-
 EOF
 
 
@@ -193,21 +200,6 @@ EOF
 
 
 # -----------------------------------------------------------------------------
-# yq CLI tool
-# more detail here: https://lindevs.com/install-yq-on-ubuntu/
-# -----------------------------------------------------------------------------
-# lpiot 2023-11-19: now retrieved from jpetazzo/shpod
-# FROM base as yq
-# 
-# ARG DOCKER_IMAGES_MAINTAINER
-# 
-# LABEL maintainer=${DOCKER_IMAGES_MAINTAINER}
-# 
-# RUN wget -qO /usr/bin/yq  https://github.com/mikefarah/yq/releases/latest/download/yq_linux_amd64 && \
-#     chmod a+x /usr/bin/yq
-
-
-# -----------------------------------------------------------------------------
 # Final Image(s) - GITPOD
 # -----------------------------------------------------------------------------
 FROM ${GITPOD_IMAGE} as gitpod_workspace
@@ -251,18 +243,8 @@ COPY --from=pac --link /root/.bashrc  ./.bashrc.d/completion_packer.sh
 # Copy lot of tools from jpetazzo/shpod forked to a personnal image
 # COPY cmd cannot use ARG variables vOv
 COPY --from=ghcr.io/lpiot/shpod:lpiot_20251104 --link --exclude=/usr/local/bin/docker-compose /usr/local/bin/* /usr/local/bin
-COPY --from=ghcr.io/lpiot/shpod:lpiot_20251104 --link /usr/bin/yq /usr/bin
 COPY --from=ghcr.io/lpiot/shpod:lpiot_20251104 --link /usr/share/bash-completion/* /usr/share/bash-completion
 
-# ----- common tools install
-RUN <<EOF bash
-    sudo apt-get update -y
-    sudo apt-get install -y jq tmux vim \
-         apt-transport-https ca-certificates gnupg
-EOF
-
-# lpiot 2023-11-19: now retrieved from jpetazzo/shpod
-# COPY --from=yq --link /usr/bin/yq /usr/bin/yq
 
 # ----- prerequisites for container.training labs
 RUN pip install git+https://github.com/lilydjwg/pssh
