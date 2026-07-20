@@ -20,9 +20,6 @@ ARG CLOUDSHELL_IMAGE=gcr.io/cloudshell-images/cloudshell:latest
 # Hugo Statis Site Generator
 ARG HUGO_VERSION=0.152.2
 
-# Packer release version
-ARG PACKER_VERSION=1.14.2
-
 # shpod image verion
 ARG SHPOD_VERSION=lpiot_20251104
 
@@ -132,6 +129,32 @@ EOF
 
 
 # -----------------------------------------------------------------------------
+# Packer
+# -----------------------------------------------------------------------------
+FROM base as pac
+
+ARG DOCKER_IMAGES_MAINTAINER
+
+# Packer release version
+# https://releases.hashicorp.com/packer
+ARG PACKER_VERSION=1.15.4
+
+LABEL maintainer=${DOCKER_IMAGES_MAINTAINER}
+
+# Packer install
+WORKDIR /usr/bin
+RUN <<EOF bash
+    wget https://releases.hashicorp.com/packer/${PACKER_VERSION}/packer_${PACKER_VERSION}_linux_amd64.zip
+    unzip ./packer_${PACKER_VERSION}_linux_amd64.zip
+    rm -f ./packer_${PACKER_VERSION}_linux_amd64.zip
+
+    Add Packer autocompletion in BASH
+    touch ~/.bashrc
+    packer -autocomplete-install
+EOF
+
+
+# -----------------------------------------------------------------------------
 # Scaleway
 # -----------------------------------------------------------------------------
 FROM base as scw
@@ -173,32 +196,6 @@ EOF
 
 
 # -----------------------------------------------------------------------------
-# Packer
-# -----------------------------------------------------------------------------
-FROM base as pac
-
-ARG DOCKER_IMAGES_MAINTAINER
-ARG PACKER_VERSION
-
-LABEL maintainer=${DOCKER_IMAGES_MAINTAINER}
-
-# Packer install
-WORKDIR /usr/bin
-RUN <<EOF bash
-    wget https://releases.hashicorp.com/packer/${PACKER_VERSION}/packer_${PACKER_VERSION}_linux_amd64.zip
-    unzip ./packer_${PACKER_VERSION}_linux_amd64.zip
-    rm -f ./packer_${PACKER_VERSION}_linux_amd64.zip
-
-    # Compress binaries
-    upx /usr/local/bin/packer
-
-    Add Packer autocompletion in BASH
-    touch ~/.bashrc
-    packer -autocomplete-install
-EOF
-
-
-# -----------------------------------------------------------------------------
 # Final Image(s) - GITPOD
 # -----------------------------------------------------------------------------
 FROM ${GITPOD_IMAGE} as gitpod_workspace
@@ -228,15 +225,15 @@ COPY --from=hugo --link /usr/local/bin/hugo /usr/local/bin
 
 # Copy of Scaleway CLI
 COPY --from=scw --link /usr/local/bin/scw /usr/bin/scw
-RUN scw autocomplete script shell=bash > ./.bashrc.d/completion_scw.sh
-
-# Copy of Terraform
-COPY --from=tf --link /usr/bin/terraform /usr/bin/terraform
-COPY --from=tf --link /root/.bashrc ./.bashrc.d/completion_terraform.sh
+#RUN scw autocomplete script shell=bash > ./.bashrc.d/completion_scw.sh
 
 # Copy of Packer
 COPY --from=pac --link /usr/bin/packer /usr/bin/packer
 COPY --from=pac --link /root/.bashrc  ./.bashrc.d/completion_packer.sh
+
+# Copy of Terraform
+COPY --from=tf --link /usr/bin/terraform /usr/bin/terraform
+COPY --from=tf --link /root/.bashrc ./.bashrc.d/completion_terraform.sh
 
 # lpiot 2023-11-19: now retrieved from jpetazzo/shpod
 # Copy lot of tools from jpetazzo/shpod forked to a personnal image
