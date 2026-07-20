@@ -264,7 +264,8 @@ COPY --from=ghcr.io/lpiot/shpod:lpiot_20251104 --link /usr/share/bash-completion
 
 
 # ----- prerequisites for container.training labs
-RUN pip install git+https://github.com/lilydjwg/pssh
+# RUN pip install git+https://github.com/lilydjwg/pssh
+RUN apk add pssh
 
 # ----- GCloud SDK install
 
