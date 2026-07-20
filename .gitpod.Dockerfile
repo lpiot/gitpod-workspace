@@ -113,6 +113,23 @@ RUN apk add age
 
 
 # -----------------------------------------------------------------------------
+# OpenTofu
+# -----------------------------------------------------------------------------
+FROM base as tofu
+
+ARG DOCKER_IMAGES_MAINTAINER
+
+# OpenTofu release version
+# https://github.com/opentofu/opentofu/releases
+ARG OPENTOFU_VERSION=1.12.4
+
+LABEL maintainer=${DOCKER_IMAGES_MAINTAINER}
+
+# OpenTofu
+# FIXME: remove hard-typed version
+COPY --from=ghcr.io/opentofu/opentofu:1.12.4 /usr/local/bin/tofu /usr/local/bin/
+
+# -----------------------------------------------------------------------------
 # Packer
 # -----------------------------------------------------------------------------
 FROM base as pac
@@ -149,7 +166,7 @@ LABEL maintainer=${DOCKER_IMAGES_MAINTAINER}
 
 RUN <<EOF bash
     curl -s https://raw.githubusercontent.com/scaleway/scaleway-cli/master/scripts/get.sh | sh
-
+    scw autocomplete script shell=bash > ./.bashrc.d/completion_scw.sh
 EOF
 
 
@@ -219,6 +236,9 @@ COPY --from=hugo --link /usr/local/bin/hugo /usr/local/bin
 # Copy of Mozilla SOPS
 COPY --from=sops --link /usr/bin/age /usr/local/bin
 COPY --from=sops --link /usr/local/bin/sops /usr/local/bin
+
+# COPY of OpenTofu
+COPY --from=tofu --link /usr/local/bin/tofu /usr/local/bin/tofu
 
 # Copy of Packer
 COPY --from=pac --link /usr/bin/packer /usr/bin/packer
