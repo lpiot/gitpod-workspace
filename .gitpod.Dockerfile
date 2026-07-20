@@ -185,11 +185,13 @@ ARG DOCKER_IMAGES_MAINTAINER
 
 LABEL maintainer=${DOCKER_IMAGES_MAINTAINER}
         
+WORKDIR /usr/bin
 RUN <<EOF bash
     wget https://starship.rs/install.sh
     chmod +x install.sh
     ./install.sh --verbose --yes
-    starship init bash > ./.bashrc.d/completion_starship.sh
+    mkdir -p ~/.bashrc.d
+    starship init bash > ~/.bashrc.d/completion_starship.sh
 EOF
 
 
@@ -260,7 +262,7 @@ COPY --from=ghcr.io/jpetazzo/shpod:latest --link /usr/local/bin/* /usr/local/bin
 
 # Copy of Starship
 COPY --from=starship --link /usr/local/bin/starship /usr/local/bin/
-COPY --from=starship --link ./.bashrc.d/completion_starship.sh ./.bashrc.d/completion_starship.sh
+COPY --from=starship --link /root/.bashrc.d/completion_starship.sh ./.bashrc.d/completion_starship.sh
 
 # Copy of Terraform
 COPY --from=tf --link /usr/bin/terraform /usr/bin/terraform
