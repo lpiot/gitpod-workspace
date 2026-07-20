@@ -170,6 +170,7 @@ LABEL maintainer=${DOCKER_IMAGES_MAINTAINER}
 
 RUN <<EOF bash
     curl -s https://raw.githubusercontent.com/scaleway/scaleway-cli/master/scripts/get.sh | sh
+    mkdir -p ./.bashrc.d/
     scw autocomplete script shell=bash > ./.bashrc.d/completion_scw.sh
 EOF
 
@@ -252,7 +253,8 @@ COPY --from=pac --link /root/.bashrc  ./.bashrc.d/completion_packer.sh
 
 # Copy of Scaleway CLI
 COPY --from=scw --link /usr/local/bin/scw /usr/bin/scw
-#RUN scw autocomplete script shell=bash > ./.bashrc.d/completion_scw.sh
+COPY --from=scw --link ./.bashrc.d/completion_scw.sh ./.bashrc.d/completion_scw.sh
+
 
 # Copy of Starship
 COPY --from=starship --link /usr/local/bin/starship /usr/local/bin/
