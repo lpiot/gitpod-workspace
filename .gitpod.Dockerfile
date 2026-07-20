@@ -74,14 +74,17 @@ ARG DOCKER_IMAGES_MAINTAINER
 
 # Hugo Statis Site Generator
 # https://github.com/gohugoio/hugo/releases
-ARG HUGO_VERSION=0.164.2
+ARG HUGO_VERSION=0.164.0
 
 LABEL maintainer=${DOCKER_IMAGES_MAINTAINER}
         
+WORKDIR /usr/local/bin
 RUN <<EOF bash
     wget https://github.com/gohugoio/hugo/releases/download/v${HUGO_VERSION}/hugo_extended_${HUGO_VERSION}_linux-amd64.tar.gz
     tar -xzf hugo_extended_${HUGO_VERSION}_linux-amd64.tar.gz
-    cp -pr hugo /usr/local/bin/
+
+    rm -f hugo_extended_${HUGO_VERSION}_linux-amd64.tar.gz
+    # cp -pr hugo /usr/local/bin/
 EOF
 
 
