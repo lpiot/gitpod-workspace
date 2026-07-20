@@ -41,23 +41,6 @@ RUN apk update && \
 
 
 # -----------------------------------------------------------------------------
-# Starship in RUST
-# source: https://starship.rs/
-# -----------------------------------------------------------------------------
-FROM base AS starship
-
-ARG DOCKER_IMAGES_MAINTAINER
-
-LABEL maintainer=${DOCKER_IMAGES_MAINTAINER}
-        
-RUN <<EOF bash
-    wget https://starship.rs/install.sh
-    chmod +x install.sh
-    ./install.sh --verbose --yes
-EOF
-
-
-# -----------------------------------------------------------------------------
 # Mozilla SOPS & AGE
 # -----------------------------------------------------------------------------
 FROM base as sops
@@ -171,6 +154,24 @@ EOF
 
 
 # -----------------------------------------------------------------------------
+# Starship in RUST
+# source: https://starship.rs/
+# -----------------------------------------------------------------------------
+FROM base AS starship
+
+ARG DOCKER_IMAGES_MAINTAINER
+
+LABEL maintainer=${DOCKER_IMAGES_MAINTAINER}
+        
+RUN <<EOF bash
+    wget https://starship.rs/install.sh
+    chmod +x install.sh
+    ./install.sh --verbose --yes
+    starship init bash > ./.bashrc.d/completion_starship.sh
+EOF
+
+
+# -----------------------------------------------------------------------------
 # Terraform
 # -----------------------------------------------------------------------------
 FROM base as tf
@@ -208,11 +209,6 @@ LABEL maintainer=${DOCKER_IMAGES_MAINTAINER}
 
 WORKDIR /home/gitpod
 
-# Copy of RUST awesome CLI tools
-COPY --from=starship --link /usr/local/bin/starship /usr/local/bin/
-# TODO: switch this part into starship build stage
-RUN starship init bash > ./.bashrc.d/completion_starship.sh
-
 # Copy of Mozilla SOPS
 COPY --from=sops --link /usr/bin/age /usr/local/bin
 COPY --from=sops --link /usr/local/bin/sops /usr/local/bin
@@ -231,6 +227,10 @@ COPY --from=scw --link /usr/local/bin/scw /usr/bin/scw
 # Copy of Packer
 COPY --from=pac --link /usr/bin/packer /usr/bin/packer
 COPY --from=pac --link /root/.bashrc  ./.bashrc.d/completion_packer.sh
+
+# Copy of Starship
+COPY --from=starship --link /usr/local/bin/starship /usr/local/bin/
+COPY --from=starship --link ./.bashrc.d/completion_starship.sh ./.bashrc.d/completion_starship.sh
 
 # Copy of Terraform
 COPY --from=tf --link /usr/bin/terraform /usr/bin/terraform
