@@ -17,9 +17,6 @@ ARG GITPOD_IMAGE=gitpod/workspace-python-3.12
 
 ARG CLOUDSHELL_IMAGE=gcr.io/cloudshell-images/cloudshell:latest
 
-# Digital Ocean CLI release version
-ARG DOCTL_VERSION=1.146.0
-
 # Hugo Statis Site Generator
 ARG HUGO_VERSION=0.152.2
 
@@ -111,13 +108,18 @@ RUN apk add age
 #     chmod +x /usr/local/bin/sops
 # EOF
 
+
 # -----------------------------------------------------------------------------
-# Digital Ocean
+# Digital Ocean CLI
 # -----------------------------------------------------------------------------
 FROM base as do
 
 ARG DOCKER_IMAGES_MAINTAINER
-ARG DOCTL_VERSION
+
+# Digital Ocean CLI release version
+# https://github.com/digitalocean/doctl/releases
+ARG DOCTL_VERSION=1.163.0
+
 
 LABEL maintainer=${DOCKER_IMAGES_MAINTAINER}
 
