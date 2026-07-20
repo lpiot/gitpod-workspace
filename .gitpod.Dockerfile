@@ -78,8 +78,6 @@ RUN <<EOF bash
     chmod +x install.sh
     ./install.sh --verbose --yes
 
-    # Compress binaries
-    #upx /usr/local/bin/starship
 EOF
 
 
@@ -100,9 +98,6 @@ RUN <<EOF bash
     mv sops-v${SOPS_VERSION}.linux.amd64 /usr/local/bin/sops
     chmod +x /usr/local/bin/sops
 
-    # Compress binaries
-    upx /usr/bin/age
-    upx /usr/local/bin/sops
 EOF
 
 # -----------------------------------------------------------------------------
@@ -121,8 +116,6 @@ RUN <<EOF bash
     tar -xzf ./doctl-${DOCTL_VERSION}-linux-amd64.tar.gz
     rm -f ./doctl-${DOCTL_VERSION}-linux-amd64.tar.gz
 
-    # Compress binaries
-    upx /usr/bin/doctl
     # Add Digital Ocean CLI autocompletion in BASH
     ./doctl completion bash > ~/completion_doctl.sh
 EOF
@@ -140,8 +133,6 @@ LABEL maintainer=${DOCKER_IMAGES_MAINTAINER}
 RUN <<EOF bash
     curl -s https://raw.githubusercontent.com/scaleway/scaleway-cli/master/scripts/get.sh | sh
 
-    # Compress binaries
-    upx /usr/local/bin/scw
 EOF
 
 
