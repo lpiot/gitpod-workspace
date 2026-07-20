@@ -32,7 +32,7 @@ LABEL maintainer=${DOCKER_IMAGES_MAINTAINER}
 
 # ----- common tools install
 RUN apk update && \
-    apk add ca-certificates curl git gnupg jq neovim tmux unzip wget yq
+    apk add bash ca-certificates curl git gnupg jq neovim tmux unzip wget yq
 # RUN <<EOF bash
 #     sudo apt-get update -y
 #     sudo apt-get install -y git jq tmux vim wget \
